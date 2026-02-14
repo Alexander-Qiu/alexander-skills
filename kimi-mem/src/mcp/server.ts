@@ -210,7 +210,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 
 // 注册工具调用处理器
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    const { name, arguments: args } = request.params;
+    const { name, arguments: args = {} } = request.params;
 
     try {
         switch (name) {

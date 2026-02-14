@@ -1,6 +1,7 @@
 import { getDatabase } from '../db/connection.js';
-import { existsSync, statSync } from 'fs';
+import { existsSync, statSync, readFileSync } from 'fs';
 import { execSync } from 'child_process';
+import path from 'path';
 
 export interface Project {
     id: number;
@@ -104,13 +105,11 @@ export class ProjectService {
      * 3. 使用目录名
      */
     detectFromPath(cwd: string = process.cwd()): { name: string; path: string } {
-        const path = require('path');
-        
         // 尝试读取 package.json
         const pkgPath = path.join(cwd, 'package.json');
         if (existsSync(pkgPath)) {
             try {
-                const pkg = JSON.parse(require('fs').readFileSync(pkgPath, 'utf-8'));
+                const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
                 if (pkg.name && pkg.name !== '.') {
                     return { name: pkg.name, path: cwd };
                 }
