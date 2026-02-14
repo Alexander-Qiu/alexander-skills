@@ -1,0 +1,39 @@
+{
+  "name": "kimi-mem",
+  "version": "0.1.0",
+  "description": "Memory management system for Kimi Code CLI via MCP",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "kimi-mem": "./dist/cli/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/mcp/server.js",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "kimi",
+    "kimi-code",
+    "mcp",
+    "memory",
+    "context",
+    "skill"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.1",
+    "better-sqlite3": "^11.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
