@@ -8,7 +8,8 @@ Personal Agent Skills library for Kimi Code CLI and other AI agents.
 
 | Skill | Description | Status |
 |-------|-------------|--------|
-| [kimi-mem](./kimi-mem/) | Cross-session memory management system | ✅ Ready |
+| [kimi-mem](./kimi-mem/) | Cross-session memory management system (Kimi) | ✅ Ready |
+| [claude-mem](./skills/claude-mem/) | Cross-session memory management system (Claude) | ✅ Ready |
 | [git-workflow](./skills/git-workflow/) | Git workflow for skill development | ✅ Ready |
 
 ## Quick Start
