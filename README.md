@@ -6,12 +6,47 @@ Personal Agent Skills library for Kimi Code CLI and other AI agents.
 
 ## Skills
 
-| Skill | Description | Status |
-|-------|-------------|--------|
-| [kimi-mem](./kimi-mem/) | Cross-session memory management system (Kimi) | ✅ Ready |
-| [claude-mem](./skills/claude-mem/) | Cross-session memory management system (Claude) | ✅ Ready |
-| [find-skills](./skills/find-skills/) | Discover and install agent skills | ✅ Ready |
-| [git-workflow](./skills/git-workflow/) | Git workflow for skill development | ✅ Ready |
+| Skill | Description | Status | Platform |
+|-------|-------------|--------|----------|
+| [kimi-mem](./skills/kimi-mem/) | Cross-session memory management system | ✅ Ready | 🟢 Kimi |
+| [find-skills](./skills/find-skills/) | Discover and install agent skills | ✅ Ready | 🔵 Claude |
+| [git-workflow](./skills/git-workflow/) | Git workflow for skill development | ✅ Ready | 🟢 Kimi |
+| [algorithmic-art](./skills/algorithmic-art/) | Creating algorithmic art using p5.js | ✅ Ready | 🔵 Claude |
+| [brainstorming](./skills/brainstorming/) | Explore user intent before implementation | ✅ Ready | 🔵 Claude |
+| [brand-guidelines](./skills/brand-guidelines/) | Anthropic's official brand colors and typography | ✅ Ready | 🔵 Claude |
+| [canvas-design](./skills/canvas-design/) | Create beautiful visual art in PNG/PDF | ✅ Ready | 🔵 Claude |
+| [dispatching-parallel-agents](./skills/dispatching-parallel-agents/) | Dispatch 2+ independent tasks in parallel | ✅ Ready | 🔵 Claude |
+| [doc-coauthoring](./skills/doc-coauthoring/) | Structured workflow for co-authoring documentation | ✅ Ready | 🔵 Claude |
+| [docx](./skills/docx/) | Create and manipulate Word documents | ✅ Ready | 🔵 Claude |
+| [executing-plans](./skills/executing-plans/) | Execute written implementation plans | ✅ Ready | 🔵 Claude |
+| [finishing-a-development-branch](./skills/finishing-a-development-branch/) | Complete development work with structured options | ✅ Ready | 🔵 Claude |
+| [frontend-design](./skills/frontend-design/) | Production-grade frontend interfaces | ✅ Ready | 🔵 Claude |
+| [internal-comms](./skills/internal-comms/) | Resources for internal communications | ✅ Ready | 🔵 Claude |
+| [mcp-builder](./skills/mcp-builder/) | Guide for creating MCP servers | ✅ Ready | 🔵 Claude |
+| [pdf](./skills/pdf/) | Read, extract, create, and manipulate PDFs | ✅ Ready | 🔵 Claude |
+| [pptx](./skills/pptx/) | Create and edit PowerPoint presentations | ✅ Ready | 🔵 Claude |
+| [receiving-code-review](./skills/receiving-code-review/) | Handle code review feedback properly | ✅ Ready | 🔵 Claude |
+| [requesting-code-review](./skills/requesting-code-review/) | Request comprehensive code reviews | ✅ Ready | 🔵 Claude |
+| [skill-creator](./skills/skill-creator/) | Guide for creating effective skills | ✅ Ready | 🔵 Claude |
+| [slack-gif-creator](./skills/slack-gif-creator/) | Create animated GIFs optimized for Slack | ✅ Ready | 🔵 Claude |
+| [subagent-driven-development](./skills/subagent-driven-development/) | Execute plans with independent tasks | ✅ Ready | 🔵 Claude |
+| [systematic-debugging](./skills/systematic-debugging/) | Debug bugs and test failures | ✅ Ready | 🔵 Claude |
+| [test-driven-development](./skills/test-driven-development/) | TDD workflow for features and bugfixes | ✅ Ready | 🔵 Claude |
+| [theme-factory](./skills/theme-factory/) | Styling artifacts with themes | ✅ Ready | 🔵 Claude |
+| [using-git-worktrees](./skills/using-git-worktrees/) | Create isolated git worktrees | ✅ Ready | 🔵 Claude |
+| [using-superpowers](./skills/using-superpowers/) | How to find and use skills | ✅ Ready | 🔵 Claude |
+| [verification-before-completion](./skills/verification-before-completion/) | Verify work before claiming completion | ✅ Ready | 🔵 Claude |
+| [web-artifacts-builder](./skills/web-artifacts-builder/) | Create elaborate multi-component web artifacts | ✅ Ready | 🔵 Claude |
+| [webapp-testing](./skills/webapp-testing/) | Test local web applications with Playwright | ✅ Ready | 🔵 Claude |
+| [writing-plans](./skills/writing-plans/) | Create implementation plans before coding | ✅ Ready | 🔵 Claude |
+| [writing-skills](./skills/writing-skills/) | Create and verify skills before deployment | ✅ Ready | 🔵 Claude |
+| [xlsx](./skills/xlsx/) | Create and manipulate Excel spreadsheets | ✅ Ready | 🔵 Claude |
+
+**Platform Legend:**
+- 🟢 **Kimi** - Works with Kimi Code CLI
+- 🔵 **Claude** - Works with Claude Code (may require adaptation for other agents)
+
+> ⚠️ **Note:** Most skills were originally designed for Claude Code. While the concepts are universal, some skills may need minor adaptations to work with Kimi CLI or other agents.
 
 ## Quick Start
 
@@ -24,18 +59,45 @@ cd alexander-skills
 
 ### 2. Install a skill
 
+> 💡 **Pro Tip:** Kimi CLI automatically loads skills from `~/.config/agents/skills/` and `./.agents/skills/` directories. Place frequently-used skills at user-level, project-specific skills at project-level.
+
 #### Option A: User-level (available in all projects)
 
 ```bash
 mkdir -p ~/.config/agents/skills
-cp -r kimi-mem ~/.config/agents/skills/
+cp -r skills/kimi-mem ~/.config/agents/skills/
 ```
 
 #### Option B: Project-level (only in current project)
 
 ```bash
 mkdir -p .agents/skills
-cp -r kimi-mem .agents/skills/
+cp -r skills/kimi-mem .agents/skills/
+```
+
+#### Option C: Symlink for development (auto-update when repo changes)
+
+```bash
+# User-level symlink
+mkdir -p ~/.config/agents/skills
+ln -s $(pwd)/skills/kimi-mem ~/.config/agents/skills/kimi-mem
+
+# Or project-level symlink
+mkdir -p .agents/skills
+ln -s $(pwd)/skills/kimi-mem .agents/skills/kimi-mem
+```
+
+#### Option D: Bulk install all skills
+
+```bash
+# Install all skills to user-level
+mkdir -p ~/.config/agents/skills
+cp -r skills/* ~/.config/agents/skills/
+
+# Or install specific skills only
+for skill in kimi-mem git-workflow; do
+  cp -r skills/$skill ~/.config/agents/skills/
+done
 ```
 
 ### 3. Setup kimi-mem (if using memory skill)
