@@ -120,20 +120,54 @@ Additional information.
 
 ## 🔄 Git Workflow
 
+### Direct Push to Main (验证过的用户)
+
+以下用户可以直接 push 到 `main` 分支，**但必须遵循以下规则**：
+
+- **Alexander Qiu** (仓库所有者)
+
+**⚠️ 直接 Push 规则：**
+1. 变更必须已经过**充分验证**（测试通过、功能正常）
+2. 仅限文档更新、README 修改、小的配置调整
+3. 代码变更、新功能添加必须使用 PR 流程
+4. 如果变更可能影响他人，即使小改动也建议使用 PR
+
+### 标准工作流程（推荐）
+
 **DO:**
 - Create feature branches from main
 - Pull latest before starting work
 - Write clear commit messages
 - Test before pushing
 - One logical change per commit
+- **充分验证后再合并到 main 或发布分支**
 
 **DON'T:**
-- Push directly to main
-- Commit broken code
+- Push broken/untested code directly to main
 - Mix unrelated changes
 - Force push to shared branches
+- **跳过验证直接合并到发布分支**
+
+### 合并到 Main/发布分支的要求
+
+任何合并到 `main` 或发布分支（如 `release/*`）的代码必须满足：
+
+- [ ] **功能验证** - 核心功能已测试并正常工作
+- [ ] **构建通过** - `npm run build` 无错误（如适用）
+- [ ] **文档更新** - SKILL.md 和相关文档已同步更新
+- [ ] **兼容性检查** - 不破坏现有 skills 的兼容性
+- [ ] **Self-Review** - 作者已自行 review 代码
+
+**高风险变更必须通过 PR：**
+- 新 skill 添加
+- API 接口变更
+- 依赖版本升级
+- 重构核心代码
+- 配置/构建流程修改
 
 ### Step-by-Step
+
+#### 标准 PR 流程
 
 ```bash
 # 1. Start from main
@@ -146,20 +180,48 @@ git checkout -b feature/my-skill
 # 3. Make changes
 # ... edit files ...
 
-# 4. Commit
+# 4. 本地验证（必须）
+npm run build        # 如果有构建步骤
+npm test             # 如果有测试
+# 手动测试核心功能
+
+# 5. Commit
 git add .
 git commit -m "feat: Add my-skill with X feature"
 
-# 5. Push
+# 6. Push
 git push -u origin feature/my-skill
 
-# 6. Create PR on GitHub
+# 7. Create PR on GitHub
 # ... describe changes ...
+# ... 确保 checklist 已勾选 ...
 
-# 7. After merge, cleanup
+# 8. After merge, cleanup
 git checkout main
 git pull origin main
 git branch -d feature/my-skill
+```
+
+#### 验证过的用户直接 Push 流程
+
+```bash
+# 仅适用于小改动且已充分验证的情况
+git checkout main
+git pull origin main
+
+# 创建临时分支（即使直接 push，也先创建分支做验证）
+git checkout -b docs/quick-fix
+# ... 编辑 ...
+# ... 本地验证 ...
+git commit -m "docs: Quick fix"
+
+# 合并到 main 并推送
+git checkout main
+git merge docs/quick-fix
+git push origin main
+
+# 清理
+git branch -d docs/quick-fix
 ```
 
 ## 📝 Code Style
