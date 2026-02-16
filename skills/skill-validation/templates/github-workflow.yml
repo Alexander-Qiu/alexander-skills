@@ -1,0 +1,140 @@
+# .github/workflows/skill-validation.yml
+# Copy this to your repository's .github/workflows/ directory
+
+name: Skill Validation
+
+on:
+  pull_request:
+    paths:
+      - 'skills/**'
+  push:
+    branches: [main]
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed_skills: ${{ steps.changes.outputs.skills }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Detect changed skills
+        id: changes
+        run: |
+          # Get list of changed skill directories
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            CHANGED=$(git diff --name-only origin/main...HEAD | grep -E '^skills/[^/]+/' | cut -d'/' -f2 | sort -u | jq -R . | jq -s .)
+          else
+            CHANGED=$(git diff --name-only HEAD~1 | grep -E '^skills/[^/]+/' | cut -d'/' -f2 | sort -u | jq -R . | jq -s .)
+          fi
+          echo "skills=$CHANGED" >> $GITHUB_OUTPUT
+          echo "Changed skills: $CHANGED"
+
+  structure-validation:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.changed_skills != '[]' }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install pyyaml
+      - name: Validate skill structures
+        run: |
+          SKILLS='${{ needs.detect-changes.outputs.changed_skills }}'
+          echo "$SKILLS" | jq -r '.[]' | while read skill; do
+            echo "Validating: skills/$skill"
+            python skills/skill-validation/scripts/validate_structure.py "skills/$skill" || exit 1
+          done
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.changed_skills != '[]' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: ${{ fromJson(needs.detect-changes.outputs.changed_skills) }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          pip install pytest pytest-cov pyyaml
+          if [ -f "skills/${{ matrix.skill }}/requirements.txt" ]; then
+            pip install -r "skills/${{ matrix.skill }}/requirements.txt"
+          fi
+          if [ -f "skills/${{ matrix.skill }}/package.json" ]; then
+            cd "skills/${{ matrix.skill }}" && npm install || true
+          fi
+      - name: Run tests
+        run: |
+          cd "skills/${{ matrix.skill }}"
+          if [ -d "tests" ]; then
+            pytest tests/ -v --cov=scripts --cov-report=xml
+          else
+            echo "No tests directory, skipping"
+          fi
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        if: hashFiles('skills/${{ matrix.skill }}/coverage.xml') != ''
+        with:
+          files: skills/${{ matrix.skill }}/coverage.xml
+          flags: ${{ matrix.skill }}
+
+  compatibility-check:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.changed_skills != '[]' }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install pyyaml
+      - name: Generate compatibility matrices
+        run: |
+          mkdir -p reports
+          SKILLS='${{ needs.detect-changes.outputs.changed_skills }}'
+          echo "$SKILLS" | jq -r '.[]' | while read skill; do
+            echo "Checking compatibility: skills/$skill"
+            python skills/skill-validation/scripts/check_compatibility.py "skills/$skill" --output "reports/${skill}-compatibility.md"
+          done
+      - name: Upload compatibility reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: compatibility-reports
+          path: reports/
+
+  full-validation:
+    runs-on: ubuntu-latest
+    needs: [structure-validation, unit-tests, compatibility-check]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install pytest pytest-cov pyyaml
+      - name: Run full validation on all skills
+        run: |
+          mkdir -p reports
+          for skill_dir in skills/*/; do
+            skill=$(basename "$skill_dir")
+            echo "Full validation: $skill"
+            python skills/skill-validation/scripts/validate_skill.py "$skill_dir" --output "reports/${skill}-validation.json" || true
+          done
+      - name: Upload validation reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: validation-reports
+          path: reports/

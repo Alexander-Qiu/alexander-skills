@@ -57,20 +57,64 @@ fix: Resolve ES Module compatibility in kimi-mem
 
 ## 🧪 Testing Requirements
 
-Before submitting PR:
+### Quick Validation (All Skills)
 
-- [ ] Skill loads without errors
-- [ ] If TypeScript: `npm run build` succeeds
-- [ ] Basic functionality tested
-- [ ] Documentation is clear
+Before submitting PR, run automated validation:
 
-**For kimi-mem type skills:**
+```bash
+# Structure validation (Level 1)
+python skills/skill-validation/scripts/validate_structure.py skills/<skill-name>/
+
+# Unit tests (Level 2) - if skill has scripts/
+python skills/skill-validation/scripts/run_skill_tests.py skills/<skill-name>/ --coverage
+
+# Compatibility check (Level 3)
+python skills/skill-validation/scripts/check_compatibility.py skills/<skill-name>/
+
+# Full validation suite
+python skills/skill-validation/scripts/validate_skill.py skills/<skill-name>/ --full
+```
+
+### Pre-PR Checklist
+
+**For all skills:**
+- [ ] Level 1: Structure validation passing
+- [ ] Level 2: Unit tests passing (if scripts exist)
+- [ ] Kimi loads without errors (smoke test)
+- [ ] Documentation is complete
+
+**For Node.js skills (like kimi-mem):**
 ```bash
 cd my-skill
 npm install
 npm run build
+npm test                    # If tests exist
 node dist/cli/index.js --help
 ```
+
+### Multi-Agent Testing (Required Before Release)
+
+**⚠️ CRITICAL:** All skills must be tested in BOTH agents before release:
+
+| Agent | Test Type | Required Evidence |
+|-------|-----------|-------------------|
+| **Kimi** | Integration | Test report from template |
+| **Claude** | Integration | Test report from template |
+
+See `skills/skill-validation/templates/` for test report templates.
+
+### Complete Validation Levels
+
+See `/skill:skill-validation` for full validation framework details.
+
+| Level | Name | Automated | Required For |
+|-------|------|-----------|--------------|
+| 1 | Structure | ✅ | All PRs |
+| 2 | Unit Tests | ✅ | Skills with scripts |
+| 3 | Compatibility | ✅ | All PRs |
+| 4 | Kimi Integration | 👤 Manual | Release |
+| 5 | Claude Integration | 👤 Manual | Release |
+| 6 | E2E Scenarios | 👤 Manual | Complex skills |
 
 ## 📁 Skill Structure
 
@@ -79,11 +123,24 @@ skill-name/
 ├── SKILL.md              # Required: Main skill definition
 ├── package.json          # If Node.js based
 ├── tsconfig.json         # If TypeScript
-├── README.md             # Optional: Additional docs
 ├── src/                  # Source code
-├── docs/                 # Additional documentation
+├── scripts/              # Executable scripts (Python/Bash)
+│   ├── helper.py
+│   └── utils.sh
+├── tests/                # Unit tests (REQUIRED if scripts/ exists)
+│   ├── test_helper.py
+│   └── conftest.py
+├── references/           # Reference documentation
+│   └── api-docs.md
+├── assets/               # Templates, images, etc.
+│   └── template.docx
 └── examples/             # Example usage
 ```
+
+**Testing Requirements:**
+- If `scripts/` exists, `tests/` MUST exist with ≥1 test per script
+- Tests must be runnable with `pytest tests/`
+- Coverage should be ≥80% for scripts
 
 ### SKILL.md Template
 
