@@ -95,16 +95,40 @@ This is the **most critical** validation level. Every skill must be tested acros
 
 #### Kimi Testing Protocol
 
+**Option A: Headless/Automated Testing (Recommended for CI)**
+```bash
+# Full automated test suite
+python skills/skill-validation/scripts/test_with_kimi.py skills/<skill-name>/
+
+# Test with specific prompt
+python skills/skill-validation/scripts/test_with_kimi.py skills/<skill-name>/ \
+  -p "Your test prompt here"
+
+# Save report
+python skills/skill-validation/scripts/test_with_kimi.py skills/<skill-name>/ \
+  -o reports/kimi-test.json
+```
+
+Using `kimi -p` directly:
+```bash
+# Test skill loading
+kimi -p "Load the <skill-name> skill and confirm it works"
+
+# Test specific functionality
+kimi -p "Use <skill-name> to <do something>"
+
+# Test with file input
+echo "Test prompt" | kimi -p -
+```
+
+**Option B: Interactive Testing**
 ```bash
 # 1. Install skill to Kimi
 mkdir -p ~/.config/agents/skills
 cp -r skills/<skill-name> ~/.config/agents/skills/
 
-# 2. Start Kimi CLI and test:
-# - Does skill trigger correctly? (description triggers)
-# - Does skill load without errors?
-# - Do scripts execute correctly?
-# - Are tools accessible (if MCP-based)?
+# 2. Start Kimi CLI and test interactively
+kimi
 ```
 
 **Kimi Test Checklist:**
@@ -116,14 +140,40 @@ cp -r skills/<skill-name> ~/.config/agents/skills/
 
 #### Claude Testing Protocol
 
+**Option A: Headless/Automated Testing (Recommended for CI)**
+```bash
+# Full automated test suite
+python skills/skill-validation/scripts/test_with_claude.py skills/<skill-name>/
+
+# Test with specific prompt
+python skills/skill-validation/scripts/test_with_claude.py skills/<skill-name>/ \
+  -p "Your test prompt here"
+
+# Test workflow execution
+python skills/skill-validation/scripts/test_with_claude.py skills/<skill-name>/ \
+  -p "Task description" --workflow
+
+# Save report
+python skills/skill-validation/scripts/test_with_claude.py skills/<skill-name>/ \
+  -o reports/claude-test.json
+```
+
+Using `claude -p` directly:
+```bash
+# Test skill loading
+claude -p "Load the <skill-name> skill and help me with <task>"
+
+# Test specific functionality  
+claude -p "Use <skill-name> to <do something>"
+```
+
+**Option B: Interactive Testing**
 ```bash
 # 1. Install skill to Claude
 # (Copy to Claude's skill directory or use Claude's skill loading mechanism)
 
-# 2. Test with Claude Code:
-# - Does skill trigger correctly?
-# - Does Claude follow the workflow?
-# - Are examples clear and executable?
+# 2. Start Claude Code and test interactively
+claude
 ```
 
 **Claude Test Checklist:**
@@ -204,18 +254,136 @@ Create compatibility report:
 ```bash
 # Full validation:
 1. All previous levels
-2. Full Kimi integration test
-3. Full Claude integration test
+2. Full Kimi integration test (headless)
+3. Full Claude integration test (headless)
 4. E2E scenario tests
 5. Compatibility matrix
 ```
 
+**Automated Multi-Agent Testing:**
+```bash
+# Test in both Kimi and Claude automatically
+python skills/skill-validation/scripts/test_multi_agent.py skills/<skill-name>/
+
+# Test specific agent
+python skills/skill-validation/scripts/test_with_kimi.py skills/<skill-name>/
+python skills/skill-validation/scripts/test_with_claude.py skills/<skill-name>/
+
+# Test with specific prompt
+kimi -p "Test the {skill-name} skill"
+claude -p "Test the {skill-name} skill"
+```
+
 **Pre-Release Checklist:**
 - [ ] Level 1-4 all passing ✅
-- [ ] Kimi integration test passed ✅
-- [ ] Claude integration test passed ✅
+- [ ] Kimi integration test passed (automated or manual) ✅
+- [ ] Claude integration test passed (automated or manual) ✅
 - [ ] Compatibility matrix documented ✅
 - [ ] No blocking issues ✅
+
+## Headless Testing (Automated Agent Testing)
+
+Both Kimi and Claude support headless/prompt mode for automated testing without interactive sessions.
+
+### Kimi Headless Mode
+
+```bash
+# Basic usage
+kimi -p "<prompt>"
+
+# Examples
+kimi -p "Use pdf skill to extract text from document.pdf"
+kimi -p "Help me create a docx file with the following content..."
+```
+
+**Testing Script:**
+```bash
+# Complete test suite
+python skills/skill-validation/scripts/test_with_kimi.py skills/my-skill/
+
+# Specific tests
+python skills/skill-validation/scripts/test_with_kimi.py skills/my-skill/ \
+  -p "Test trigger phrase"
+
+# With timeout and output
+python skills/skill-validation/scripts/test_with_kimi.py skills/my-skill/ \
+  -t 60 -o reports/kimi-test.json
+```
+
+### Claude Headless Mode
+
+```bash
+# Basic usage
+claude -p "<prompt>"
+
+# Examples
+claude -p "Use webapp-testing skill to test my local server"
+claude -p "Help me create a React component using frontend-design skill"
+```
+
+**Testing Script:**
+```bash
+# Complete test suite
+python skills/skill-validation/scripts/test_with_claude.py skills/my-skill/
+
+# Workflow testing
+python skills/skill-validation/scripts/test_with_claude.py skills/my-skill/ \
+  -p "Complete this task" --workflow
+
+# Save report
+python skills/skill-validation/scripts/test_with_claude.py skills/my-skill/ \
+  -o reports/claude-test.json
+```
+
+### Multi-Agent Testing
+
+Test both agents in one command:
+
+```bash
+# Test in both Kimi and Claude
+python skills/skill-validation/scripts/test_multi_agent.py skills/my-skill/
+
+# Test specific agents
+python skills/skill-validation/scripts/test_multi_agent.py skills/my-skill/ \
+  -a kimi claude
+
+# With reports
+python skills/skill-validation/scripts/test_multi_agent.py skills/my-skill/ \
+  -o reports/test.json -m reports/test.md
+```
+
+**Output:**
+- JSON report with detailed results
+- Markdown report for human review
+- Exit code 0 = all passed, 1 = any failed
+
+### CI/CD Integration
+
+**GitHub Actions Example:**
+```yaml
+- name: Test with Kimi
+  run: |
+    python skills/skill-validation/scripts/test_with_kimi.py \
+      skills/${{ matrix.skill }}/ -o kimi-report.json
+  continue-on-error: true
+  
+- name: Test with Claude
+  run: |
+    python skills/skill-validation/scripts/test_with_claude.py \
+      skills/${{ matrix.skill }}/ -o claude-report.json
+  continue-on-error: true
+
+- name: Upload test reports
+  uses: actions/upload-artifact@v3
+  with:
+    name: agent-test-reports
+    path: '*-report.json'
+```
+
+**Note:** Headless testing requires:
+- Kimi CLI installed and authenticated (`kimi` command available)
+- Claude Code installed and authenticated (`claude` command available)
+- Skills temporarily installed in agent-specific directories
 
 ## Automated CI/CD Pipeline
 

@@ -113,6 +113,66 @@ jobs:
           name: compatibility-reports
           path: reports/
 
+  # Headless agent testing (optional, requires agent CLI to be installed)
+  agent-testing:
+    runs-on: ubuntu-latest
+    needs: [structure-validation, unit-tests]
+    if: ${{ needs.detect-changes.outputs.changed_skills != '[]' && github.event_name == 'pull_request' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: ${{ fromJson(needs.detect-changes.outputs.changed_skills) }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install test dependencies
+        run: pip install pyyaml
+      
+      # Note: These steps require Kimi/Claude CLI to be installed and authenticated
+      # Uncomment when CLI tools are available in CI
+      # 
+      # - name: Test with Kimi (headless)
+      #   if: env.KIMI_TOKEN != ''
+      #   run: |
+      #     python skills/skill-validation/scripts/test_with_kimi.py \
+      #       "skills/${{ matrix.skill }}/" \
+      #       -o "reports/${{ matrix.skill }}-kimi.json" \
+      #       -t 60
+      #   continue-on-error: true
+      #   env:
+      #     KIMI_TOKEN: ${{ secrets.KIMI_TOKEN }}
+      #
+      # - name: Test with Claude (headless)
+      #   if: env.CLAUDE_TOKEN != ''
+      #   run: |
+      #     python skills/skill-validation/scripts/test_with_claude.py \
+      #       "skills/${{ matrix.skill }}/" \
+      #       -o "reports/${{ matrix.skill }}-claude.json" \
+      #       -t 60
+      #   continue-on-error: true
+      #   env:
+      #     CLAUDE_TOKEN: ${{ secrets.CLAUDE_TOKEN }}
+      
+      - name: Check for manual test reports
+        run: |
+          mkdir -p reports
+          # Check if manual test reports exist
+          if [ -f "skills/${{ matrix.skill }}/test-reports/kimi.md" ]; then
+            cp "skills/${{ matrix.skill }}/test-reports/kimi.md" "reports/${{ matrix.skill }}-kimi-manual.md"
+          fi
+          if [ -f "skills/${{ matrix.skill }}/test-reports/claude.md" ]; then
+            cp "skills/${{ matrix.skill }}/test-reports/claude.md" "reports/${{ matrix.skill }}-claude-manual.md"
+          fi
+      
+      - name: Upload agent test reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: agent-test-reports-${{ matrix.skill }}
+          path: reports/
+
   full-validation:
     runs-on: ubuntu-latest
     needs: [structure-validation, unit-tests, compatibility-check]

@@ -12,6 +12,17 @@
 
 ## Pre-Test Setup
 
+### Option A: Automated/Headless Testing
+```bash
+# Run full automated test suite
+python skills/skill-validation/scripts/test_with_claude.py skills/{skill_name}/ \
+  -o reports/claude-test.json
+
+# Or test specific prompt
+claude -p "Load the {skill_name} skill and show me what it can do"
+```
+
+### Option B: Manual Installation
 ```bash
 # Installation commands used
 # (Method depends on Claude's skill loading mechanism)
