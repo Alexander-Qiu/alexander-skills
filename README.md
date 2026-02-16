@@ -48,6 +48,33 @@ Personal Agent Skills library for Kimi Code CLI and other AI agents.
 
 > ⚠️ **Note:** Most skills were originally designed for Claude Code. While the concepts are universal, some skills may need minor adaptations to work with Kimi CLI or other agents.
 
+## 🧪 Skill Validation
+
+All skills must pass comprehensive validation before release:
+
+```bash
+# Quick validation (Levels 1-3)
+python skills/skill-validation/scripts/validate_skill.py skills/<skill-name>/
+
+# Headless agent testing (Levels 4-5)
+python skills/skill-validation/scripts/test_multi_agent.py skills/<skill-name>/
+
+# Or test specific agent
+kimi -p "Test the <skill-name> skill"
+claude -p "Test the <skill-name> skill"
+```
+
+**Validation Levels:**
+| Level | Test | Automated | Required |
+|-------|------|-----------|----------|
+| 1 | Structure (YAML, files) | ✅ | PR |
+| 2 | Unit Tests | ✅ | If scripts |
+| 3 | Compatibility | ✅ | PR |
+| 4 | **Kimi Integration** | ✅ Headless | **Release** |
+| 5 | **Claude Integration** | ✅ Headless | **Release** |
+
+See `/skill:skill-validation` for complete validation framework.
+
 ## Quick Start
 
 ### 1. Clone the repository
