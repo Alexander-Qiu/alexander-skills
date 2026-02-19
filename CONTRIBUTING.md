@@ -189,6 +189,43 @@ Additional information.
 3. 代码变更、新功能添加必须使用 PR 流程
 4. 如果变更可能影响他人，即使小改动也建议使用 PR
 
+**🔀 Alexander Qiu 本地合并特权：**
+
+作为仓库所有者，Alexander Qiu 可以执行以下操作：
+
+1. **本地批量合并**：在本地将多个已充分验证的 feature 分支合并到 main
+2. **直接推送到 remote main**：合并完成后直接 `git push origin main`
+
+**前提条件：**
+- 每个 feature 分支都**已通过所有验证**（Level 1-6，如适用）
+- 合并前在本地再次验证 main 分支功能正常
+- 合并后确保 `git status` 显示 working tree clean
+- 推送后立即检查 remote main 状态正常
+
+**推荐流程：**
+```bash
+# 1. 确保本地 main 最新
+git checkout main
+git pull origin main
+
+# 2. 依次合并已验证的 feature 分支
+git merge feature/skill-a  # 已验证的分支 A
+git merge fix/skill-b      # 已验证的分支 B
+git merge docs/update-c    # 已验证的分支 C
+
+# 3. 最终验证
+npm run build  # 如有构建步骤
+npm test       # 如有测试
+
+# 4. 推送到 remote
+git push origin main
+
+# 5. 清理本地已合并的分支
+git branch -d feature/skill-a
+git branch -d fix/skill-b
+git branch -d docs/update-c
+```
+
 ### 标准工作流程（推荐）
 
 **DO:**
@@ -224,7 +261,36 @@ Additional information.
 
 ### Step-by-Step
 
-#### 标准 PR 流程
+#### Alexander Qiu 直接推送流程（默认）
+
+作为仓库所有者，**默认推送行为是直接推送到 `main`**，无需创建 PR。
+
+```bash
+# 1. 确保本地 main 最新
+git checkout main
+git pull origin main
+
+# 2. 如果是新功能，创建临时分支开发（可选但推荐）
+git checkout -b feature/my-skill
+# ... 编辑代码 ...
+# ... 本地验证 ...
+
+# 3. 直接在 main 上合并或直接在 main 上开发
+git checkout main
+git merge feature/my-skill  # 如果有临时分支
+
+# 4. 最终验证
+npm run build
+npm test
+
+# 5. 直接推送到 remote main（默认行为）
+git push origin main
+
+# 6. 清理临时分支
+git branch -d feature/my-skill
+```
+
+#### 标准 PR 流程（外部贡献者或需要 review 时）
 
 ```bash
 # 1. Start from main
@@ -259,26 +325,31 @@ git pull origin main
 git branch -d feature/my-skill
 ```
 
-#### 验证过的用户直接 Push 流程
+#### Alexander Qiu 批量合并流程（多个已验证分支）
+
+当有多个已经充分验证的 feature 分支需要合并时：
 
 ```bash
-# 仅适用于小改动且已充分验证的情况
+# 1. 确保本地 main 最新
 git checkout main
 git pull origin main
 
-# 创建临时分支（即使直接 push，也先创建分支做验证）
-git checkout -b docs/quick-fix
-# ... 编辑 ...
-# ... 本地验证 ...
-git commit -m "docs: Quick fix"
+# 2. 依次合并已验证的 feature 分支
+git merge feature/skill-a  # 已验证的分支 A
+git merge fix/skill-b      # 已验证的分支 B
+git merge docs/update-c    # 已验证的分支 C
 
-# 合并到 main 并推送
-git checkout main
-git merge docs/quick-fix
+# 3. 最终验证
+npm run build
+npm test
+
+# 4. 直接推送到 remote main
 git push origin main
 
-# 清理
-git branch -d docs/quick-fix
+# 5. 清理已合并的本地分支
+git branch -d feature/skill-a
+git branch -d fix/skill-b
+git branch -d docs/update-c
 ```
 
 ## 📝 Code Style
