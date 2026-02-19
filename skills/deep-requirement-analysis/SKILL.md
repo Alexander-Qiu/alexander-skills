@@ -1,6 +1,6 @@
 ---
 name: deep-requirement-analysis
-description: Use ONLY when user explicitly says "使用深度分析", "深度分析", "deep analysis", "系统分析", or "完整分析". Production-grade task planner that orchestrates brainstorming, multi-angle analysis, and execution planning.
+description: Use ONLY when user explicitly says "使用深度分析", "深度分析", "深度思考", "deep analysis", "系统分析", or "完整分析". Production-grade task planner that orchestrates brainstorming, multi-angle analysis, and execution planning.
 ---
 
 # Deep Requirement Analysis - Production Task Planner
