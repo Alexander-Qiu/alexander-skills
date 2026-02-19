@@ -288,6 +288,8 @@ cat seq.utxt
 
 ## Troubleshooting
 
+### Common Issues
+
 **Problem**: Garbled Unicode characters
 
 - **Solution**: Ensure terminal supports UTF-8 and has proper font
@@ -303,3 +305,57 @@ cat seq.utxt
 **Problem**: Output file not created
 
 - **Solution**: Check file permissions, ensure PlantUML has write access
+
+### Mermaid vs PlantUML ASCII: When to Use Which
+
+| Scenario | Recommended Tool | Reason |
+|----------|------------------|--------|
+| GitHub/GitLab README | **Mermaid** | Native rendering, clickable, color support |
+| Terminal/CLI output | **PlantUML ASCII** | Pure text, no rendering engine needed |
+| Code comments | **PlantUML ASCII** | Stays readable in plain text |
+| Email/Chat (Slack/Discord) | **PlantUML ASCII** | Universal compatibility |
+| Complex diagrams | **Mermaid** | Better layout, more diagram types |
+| Presentation slides | **Mermaid** | Better visual quality |
+| API documentation | **Mermaid** | Interactive, zoomable |
+| Git commit messages | **PlantUML ASCII** | Works in plain text |
+
+### Key Differences
+
+**Mermaid** (`mermaid-diagrams` skill):
+- Renders in browser/GitHub
+- Supports colors, styles, themes
+- More diagram types (C4, Git graphs, Gantt)
+- Requires JavaScript rendering engine
+
+**PlantUML ASCII** (this skill):
+- Pure text output
+- Works anywhere text works
+- No rendering dependencies
+- Smaller file size
+- Better for version control diffs
+
+### Quick Decision Tree
+
+```
+Need diagram?
+    ↓
+Target environment?
+    ↓
+    ┌──────────┴──────────┐
+  Web/GitHub            Terminal/Code
+    ↓                      ↓
+ Mermaid            PlantUML ASCII
+    ↓                      ↓
+ Rich visuals        Plain text
+ Interactive         Universal
+```
+
+### Converting Between Formats
+
+**Mermaid → PlantUML ASCII**: Not direct, rewrite syntax
+- Mermaid: `A --> B`
+- PlantUML: `A --> B` (similar for basic cases)
+
+**PlantUML ASCII → Mermaid**: Easier, mostly syntax-compatible
+- Both use arrow notation
+- Mermaid has more styling options
