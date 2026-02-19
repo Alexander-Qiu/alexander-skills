@@ -241,6 +241,37 @@ flowchart TB
     style Note fill:#ffffcc
 ```
 
+### Error: `Expecting 'SQE', 'DOUBLECIRCLEEND', ... got 'STR'`
+
+**Symptom:**
+```
+Parse error on line X:
+... Question['❓ "What happens at the ...
+-----------------------^
+Expecting 'SQE', 'DOUBLECIRCLEEND', 'PE', '-)', 'STADIUMEND', 'SUBROUTINEEND', ...
+```
+
+**Cause:** Using single quotes inside square brackets `['...']` is not valid Mermaid syntax. Node labels should use double quotes `["..."]` for text containing special characters.
+
+**Incorrect:**
+```mermaid
+flowchart TB
+    Node['Text with quotes']   %% ❌ Wrong!
+    Question['❓ "What happens?"']  %% ❌ Wrong!
+```
+
+**Correct:**
+```mermaid
+flowchart TB
+    Node["Text with quotes"]   %% ✅ Correct!
+    Question["❓ What happens?"]  %% ✅ Correct!
+```
+
+**Key rule:** Always use double quotes `["..."]` for node labels containing:
+- Special characters like `"`, `(`, `)`, `<`, `>`
+- Emoji and Unicode characters
+- HTML tags like `<br/>`
+
 ### Node Shape Reference
 
 | Shape | Syntax | Example |
