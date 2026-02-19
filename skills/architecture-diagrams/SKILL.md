@@ -1,48 +1,18 @@
 ---
 name: architecture-diagrams
-description: Default skill for creating architecture diagrams. Use when user asks to draw architecture diagrams, system architecture, software architecture, infrastructure diagrams, component diagrams, deployment diagrams, or any visual representation of system structure. This skill coordinates between mermaid-diagrams (for GitHub-renderable diagrams with native support) and beautiful-mermaid (for themed SVG/PNG rendering with 15+ themes). Default to mermaid-diagrams for most use cases.
+description: Default skill for creating architecture diagrams. Use when user asks to draw architecture diagrams, system architecture, software architecture, infrastructure diagrams, component diagrams, deployment diagrams, or any visual representation of system structure. Always use Mermaid for diagrams.
 ---
 
 # Architecture Diagrams
 
-Default skill for creating all types of architecture diagrams. Uses Mermaid for GitHub-native diagrams and Beautiful Mermaid for themed high-quality exports.
+Default skill for creating all types of architecture diagrams using **Mermaid**.
 
-## When to Use Which Tool
+## Default: Mermaid
 
-### 🌊 Mermaid Diagrams (Default)
-**Use for:**
-- Documentation that will be viewed on GitHub/GitLab
-- Web-based documentation (MkDocs, Docusaurus)
-- Collaboration with non-technical stakeholders
-- Complex diagrams with colors and styling
+Use Mermaid for all architecture diagrams. It renders natively on GitHub and supports various diagram types.
 
-**Output:** Rendered diagrams in Markdown
+### Basic Example
 
-### 🎨 Beautiful Mermaid (For Themed Exports)
-**Use for:**
-- High-quality themed diagrams (15+ themes)
-- SVG/PNG export for presentations
-- Custom color theming
-- Dark mode documentation
-
-**Output:** SVG, PNG (high-resolution)
-
-**Themes:** default, dracula, tokyo-night, nord, github-dark, github-light, catppuccin, solarized, one-dark
-
-## Selection Criteria
-
-| Scenario | Recommended Tool |
-|----------|------------------|
-| GitHub README | Mermaid (native rendering) |
-| Documentation site | Mermaid |
-| Presentation slides | Beautiful Mermaid (themed PNG) |
-| Dark mode docs | Beautiful Mermaid (tokyo-night, dracula) |
-| Custom branding | Beautiful Mermaid (custom theme) |
-| Terminal/CLI | Mermaid (ASCII not recommended) |
-
-## Quick Start
-
-### Default: Mermaid
 ```mermaid
 flowchart TB
     subgraph Client["Client Layer"]
@@ -65,117 +35,168 @@ flowchart TB
     Gateway --> User
 ```
 
-### Beautiful Mermaid Alternative
-Render themed diagram with custom colors:
+## Supported Diagram Types
 
-```bash
-# Using beautiful-mermaid skill
-bun run scripts/render.ts \
-  --code "graph TD; A[Client] --> B[API]" \
-  --output diagram \
-  --theme tokyo-night
+### 1. Flowchart (流程图)
+For processes, workflows, system architecture.
+
+```mermaid
+flowchart LR
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Process]
+    B -->|No| D[End]
+    C --> D
 ```
 
-Produces `diagram.svg` with beautiful theming.
+### 2. Sequence Diagram (时序图)
+For API interactions, message flows.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant API
+    participant DB
+    
+    User->>API: POST /login
+    API->>DB: Query credentials
+    DB-->>API: Return user data
+    API-->>User: Auth token
+```
+
+### 3. Class Diagram (类图)
+For OOP design, entity relationships.
+
+```mermaid
+classDiagram
+    class User {
+        +int id
+        +string email
+        +login()
+    }
+    
+    class Order {
+        +int id
+        +float total
+    }
+    
+    User "1" -- "*" Order : places
+```
+
+### 4. State Diagram (状态图)
+For state machines, lifecycles.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Processing: start
+    Processing --> Success: complete
+    Processing --> Error: fail
+    Success --> [*]
+    Error --> Idle: retry
+```
+
+### 5. ER Diagram (实体关系图)
+For database schemas.
+
+```mermaid
+erDiagram
+    USER ||--o{ ORDER : places
+    ORDER ||--|{ LINE_ITEM : contains
+    PRODUCT ||--o{ LINE_ITEM : includes
+```
 
 ## Architecture Diagram Types
 
-### 1. System Context Diagram (C4 Level 1)
-Shows the system as a box in the center, surrounded by users and other systems.
+### C4 Model
 
-**Mermaid:**
+#### Level 1: System Context
 ```mermaid
 flowchart TB
-    User["👤 User<br/>[Person]<br/>Wants to access system"]
-    System["🖥️ My System<br/>[Software System]<br/>Provides core functionality"]
-    External["🔗 External API<br/>[Software System]<br/>Third party service"]
+    User["👤 User<br/>[Person]"]
+    System["🖥️ My System<br/>[Software System]"]
+    External["🔗 External API<br/>[Software System]"]
     
-    User -->|"Uses"| System
-    System -->|"Calls"| External
+    User -->|Uses| System
+    System -->|Calls| External
 ```
 
-### 2. Container Diagram (C4 Level 2)
-Shows the high-level technology choices and how responsibilities are distributed.
-
-**Mermaid:**
+#### Level 2: Container
 ```mermaid
 flowchart TB
     subgraph Browser["Browser"]
-        SPA["Single Page Application<br/>[React, TypeScript]"]
+        SPA["SPA<br/>[React]"]
     end
     
-    subgraph "AWS Region" {
+    subgraph "AWS" {
         APIGW["API Gateway<br/>[Nginx]"]
         
-        subgraph "ECS Cluster" {
+        subgraph "ECS" {
             Auth["Auth Service<br/>[Node.js]"]
             User["User Service<br/>[Node.js]"]
         }
         
-        RDS["PostgreSQL<br/>[RDS]"]
-        Redis["Redis Cache<br/>[ElastiCache]"]
+        RDS[(PostgreSQL)]
     }
     
-    SPA -->|"HTTPS/JSON"| APIGW
-    APIGW --> Auth
-    APIGW --> User
-    Auth --> RDS
-    User --> RDS
-    Auth --> Redis
-    User --> Redis
+    SPA --> APIGW
+    APIGW --> Auth & User
+    Auth & User --> RDS
 ```
-
-### 3. Component Diagram (C4 Level 3)
-Shows the internal structure of a single container.
-
-### 4. Deployment Diagram
-Shows how containers are mapped to infrastructure.
 
 ## Best Practices
 
-### Always Include
-1. **Clear labels** - Every box should have a name and type
-2. **Technology tags** - [React], [PostgreSQL], [AWS Lambda]
-3. **Directional arrows** - Show data/request flow
-4. **Grouping** - Use subgraphs for logical organization
+1. **Use clear labels** - Every node should have a name
+2. **Add technology tags** - [React], [PostgreSQL], [AWS Lambda]
+3. **Show data flow** - Use directional arrows
+4. **Group logically** - Use subgraphs for organization
+5. **Keep it simple** - Split complex diagrams into multiple views
 
-### Color Coding (Mermaid)
+## Styling
+
+### Default Style (Subgraphs with colors)
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#e1f5fe'}}}%%
 flowchart TB
-    classDef frontend fill:#e3f2fd,stroke:#1976d2
-    classDef backend fill:#e8f5e9,stroke:#388e3c
-    classDef database fill:#fff3e0,stroke:#f57c00
-    classDef external fill:#f3e5f5,stroke:#7b1fa2
+    subgraph Frontend["Frontend Layer"]
+        A["Web App"]
+    end
     
-    FE["Frontend"]
-    BE["Backend"]
-    DB["Database"]
-    EXT["External"]
+    subgraph Backend["Backend Layer"]
+        B["API Service"]
+        C["Auth Service"]
+    end
     
-    class FE frontend
-    class BE backend
-    class DB database
-    class EXT external
+    A --> B --> C
 ```
 
-## Decision Tree
+### Minimal Style (Clean, ASCII-like layout)
+For cleaner look, use simple boxes without heavy styling:
 
-```
-User wants architecture diagram
-        ↓
-Target environment?
-        ↓
-    ┌───┴───┐
-   Web      Export
-    ↓          ↓
- Mermaid   Beautiful
-    ↓       Mermaid
- GitHub     PNG/SVG
-  Docs      Slides
+```mermaid
+flowchart TB
+    User["[User]"] --> API["[API Gateway]"]
+    API --> Auth["[Auth Service]"]
+    API --> UserSvc["[User Service]"]
+    Auth --> DB["[(Database)]"]
+    UserSvc --> DB
 ```
 
 ## References
 
-- **Mermaid**: See `../mermaid-diagrams/SKILL.md` - Native GitHub rendering, quick diagrams
-- **Beautiful Mermaid**: See `../beautiful-mermaid/SKILL.md` - Themed exports, 15+ themes, high-quality PNG
+- **Mermaid Syntax**: See `../mermaid-diagrams/SKILL.md`
+- **Beautiful Mermaid**: See `../beautiful-mermaid/SKILL.md` - For themed SVG/PNG exports
+
+## Decision Rule
+
+```
+Need architecture diagram?
+    │
+    └── Use Mermaid (always)
+        │
+        ├── GitHub/Web display → Mermaid code block
+        │
+        ├── Need themed export → Beautiful Mermaid
+        │
+        └── Simple diagram → Mermaid minimal style
+```
+
+**Always use Mermaid for architecture diagrams.**
