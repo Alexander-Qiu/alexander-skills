@@ -288,13 +288,39 @@ cat seq.utxt
 
 ## Troubleshooting
 
+### Critical: Alignment Issues in Proportional Fonts
+
+**Problem**: ASCII diagrams look misaligned on GitHub / Web / Markdown viewers
+
+```
+Expected (in fixed-width font):
++--------------+
+|  User Input  |
++--------------+
+
+Actual (in proportional font):
++--------------+
+|  User Input  |  <- Misaligned!
++--------------+
+```
+
+**Cause**: Box-drawing characters (`+` `-` `│` `┌` etc.) have different widths in proportional fonts (GitHub web interface, most document viewers).
+
+**This is a fundamental limitation of ASCII art diagrams.**
+
+**Solutions**:
+1. **Use Mermaid** for GitHub/Web documentation (renders as SVG)
+2. **Use images** for universal compatibility
+3. **View in terminal** with fixed-width font only
+4. **Accept misalignment** if ASCII is required
+
 ### Common Issues
 
 **Problem**: Garbled Unicode characters
 
 - **Solution**: Ensure terminal supports UTF-8 and has proper font
 
-**Problem**: Diagram looks misaligned
+**Problem**: Diagram looks misaligned in terminal
 
 - **Solution**: Use fixed-width font (Courier, Monaco, Consolas)
 
@@ -305,6 +331,16 @@ cat seq.utxt
 **Problem**: Output file not created
 
 - **Solution**: Check file permissions, ensure PlantUML has write access
+
+### Platform Compatibility Matrix
+
+| Platform | ASCII Alignment | Recommendation |
+|----------|-----------------|----------------|
+| Terminal (fixed-width) | ✅ Perfect | Use `-txt` or `-utxt` |
+| GitHub README | ❌ Misaligned | Use **Mermaid** instead |
+| VS Code | ⚠️ Depends on font | Use Mermaid or image |
+| Slack/Discord | ❌ Misaligned | Use Mermaid or image |
+| Email | ❌ Misaligned | Use image or Mermaid link |
 
 ### Mermaid vs PlantUML ASCII: When to Use Which
 
