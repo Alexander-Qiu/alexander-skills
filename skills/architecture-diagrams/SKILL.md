@@ -1,11 +1,11 @@
 ---
 name: architecture-diagrams
-description: Default skill for creating architecture diagrams. Use when user asks to draw architecture diagrams, system architecture, software architecture, infrastructure diagrams, component diagrams, deployment diagrams, or any visual representation of system structure. This skill coordinates between mermaid-diagrams (for GitHub-renderable diagrams) and plantuml-ascii (for terminal-friendly ASCII diagrams). Automatically selects the appropriate tool based on context.
+description: Default skill for creating architecture diagrams. Use when user asks to draw architecture diagrams, system architecture, software architecture, infrastructure diagrams, component diagrams, deployment diagrams, or any visual representation of system structure. This skill coordinates between mermaid-diagrams (for GitHub-renderable diagrams with native support) and beautiful-mermaid (for themed SVG/PNG rendering with 15+ themes). Default to mermaid-diagrams for most use cases.
 ---
 
 # Architecture Diagrams
 
-Default skill for creating all types of architecture diagrams. Automatically coordinates between Mermaid (for rich visual diagrams) and PlantUML ASCII (for text-based diagrams).
+Default skill for creating all types of architecture diagrams. Uses Mermaid for GitHub-native diagrams and Beautiful Mermaid for themed high-quality exports.
 
 ## When to Use Which Tool
 
@@ -18,25 +18,27 @@ Default skill for creating all types of architecture diagrams. Automatically coo
 
 **Output:** Rendered diagrams in Markdown
 
-### 📟 PlantUML ASCII
+### 🎨 Beautiful Mermaid (For Themed Exports)
 **Use for:**
-- Terminal-based workflows
-- Git commits/PRs without image support
-- Plain text documentation
-- Environments where graphical tools aren't available
+- High-quality themed diagrams (15+ themes)
+- SVG/PNG export for presentations
+- Custom color theming
+- Dark mode documentation
 
-**Output:** Plain text ASCII art
+**Output:** SVG, PNG (high-resolution)
+
+**Themes:** default, dracula, tokyo-night, nord, github-dark, github-light, catppuccin, solarized, one-dark
 
 ## Selection Criteria
 
 | Scenario | Recommended Tool |
 |----------|------------------|
-| GitHub README | Mermaid |
-| Terminal/CLI docs | PlantUML ASCII |
-| Technical specs | Mermaid |
-| Code comments | PlantUML ASCII |
-| Presentation slides | Mermaid |
-| Email/Chat | PlantUML ASCII |
+| GitHub README | Mermaid (native rendering) |
+| Documentation site | Mermaid |
+| Presentation slides | Beautiful Mermaid (themed PNG) |
+| Dark mode docs | Beautiful Mermaid (tokyo-night, dracula) |
+| Custom branding | Beautiful Mermaid (custom theme) |
+| Terminal/CLI | Mermaid (ASCII not recommended) |
 
 ## Quick Start
 
@@ -63,22 +65,18 @@ flowchart TB
     Gateway --> User
 ```
 
-### ASCII Alternative
-```plantuml
-@startuml
-!theme plain
-skinparam backgroundColor transparent
+### Beautiful Mermaid Alternative
+Render themed diagram with custom colors:
 
-[Client] --> [API Gateway]
-[API Gateway] --> [Auth Service]
-[API Gateway] --> [User Service]
-[Auth Service] --> [Database]
-[User Service] --> [Database]
-
-@enduml
+```bash
+# Using beautiful-mermaid skill
+bun run scripts/render.ts \
+  --code "graph TD; A[Client] --> B[API]" \
+  --output diagram \
+  --theme tokyo-night
 ```
 
-Generate with: `plantuml -utxt diagram.puml`
+Produces `diagram.svg` with beautiful theming.
 
 ## Architecture Diagram Types
 
@@ -169,15 +167,15 @@ User wants architecture diagram
 Target environment?
         ↓
     ┌───┴───┐
-   Web    Terminal
-    ↓        ↓
- Mermaid   ASCII
-    ↓        ↓
- GitHub    Code
-  Docs     Comments
+   Web      Export
+    ↓          ↓
+ Mermaid   Beautiful
+    ↓       Mermaid
+ GitHub     PNG/SVG
+  Docs      Slides
 ```
 
 ## References
 
-- **Mermaid**: See `../mermaid-diagrams/SKILL.md`
-- **PlantUML ASCII**: See `../plantuml-ascii/SKILL.md`
+- **Mermaid**: See `../mermaid-diagrams/SKILL.md` - Native GitHub rendering, quick diagrams
+- **Beautiful Mermaid**: See `../beautiful-mermaid/SKILL.md` - Themed exports, 15+ themes, high-quality PNG
