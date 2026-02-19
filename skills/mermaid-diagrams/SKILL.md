@@ -332,6 +332,73 @@ sequenceDiagram
 
 **Rule:** Diamond nodes `{...}` cannot contain other bracket types inside.
 
+### Issue: Node to Subgraph Arrow Misalignment
+
+**Symptom:** Arrows from nodes to subgraphs appear misaligned, not pointing to the intended location, or seem to "float" without a clear target.
+
+**Root Cause:** When a node and a subgraph are at the same nesting level, Mermaid's layout engine cannot determine which edge of the subgraph to point to (top, bottom, left, or right), resulting in ambiguous arrow placement.
+
+**Problematic Pattern:**
+```mermaid
+flowchart TB
+    subgraph Outer
+        NodeA["Node A"]
+        subgraph SubB["Subgraph B"]
+            Inner["Inner Node"]
+        end
+        NodeA --> SubB  %% ❌ Ambiguous - points to subgraph boundary
+    end
+```
+
+**Solution 1: Add a Representative Node (Recommended)**
+```mermaid
+flowchart TB
+    subgraph Outer
+        NodeA["Node A"]
+        subgraph SubB["Subgraph B"]
+            Interface["Interface"]  %% ✅ Representative node
+            Inner["Inner Node"]
+            Interface --> Inner
+        end
+        NodeA --> Interface  %% ✅ Clear node-to-node connection
+    end
+```
+
+**Solution 2: Chain Multiple Subgraphs**
+```mermaid
+flowchart TB
+    subgraph Outer
+        subgraph SubA["Subgraph A"]
+            Outlet["Outlet Node"]  %% Exit node of SubA
+        end
+        subgraph SubB["Subgraph B"]
+            Inlet["Inlet Node"]    %% Entry node of SubB
+        end
+        Outlet --> SubB  %% ✅ Works as chain: exit → entry
+    end
+```
+
+**Solution 3: Restructure with Direction**
+```mermaid
+flowchart LR
+    subgraph Outer
+        direction TB
+        NodeA["Node A"]
+        subgraph SubB["Subgraph B"]
+            TopNode["Top Node"]    %% Place at top
+            Inner["Inner Node"]
+        end
+        NodeA --> TopNode  %% ✅ Clear connection to specific position
+    end
+```
+
+**Best Practices for Subgraph Connections:**
+- **Always connect to specific nodes**, not subgraph boundaries
+- **Add interface/representative nodes** at subgraph entry/exit points
+- **Form chains** when connecting multiple subgraphs (exit → entry)
+- **Use explicit directions** (LR/TB) within subgraphs to control layout
+- **Avoid** connecting nodes to subgraphs at the same nesting level
+
 ## Common Pitfalls
 
 - **Breaking characters** - Avoid `{}` in comments, use proper escape sequences for special characters
