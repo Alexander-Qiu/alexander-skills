@@ -124,7 +124,7 @@ fi
 **Naming conventions for alexander-skills:**
 
 ```
-skill/<skill-name>              # New skill (e.g., skill/kimi-search)
+feat/<skill-name>              # New skill (e.g., feat/kimi-search)
 fix/<skill-name>-<issue>        # Bug fix (e.g., fix/kimi-mem-cli-error)
 docs/<what>                     # Documentation updates
 update/<skill-name>             # Update existing skill
@@ -140,7 +140,7 @@ git checkout main
 git pull origin main
 
 # Create and switch to feature branch
-git checkout -b skill/kimi-search
+git checkout -b feat/kimi-search
 
 # Verify branch created
 git branch -vv
@@ -278,10 +278,10 @@ echo "✅ Validation complete"
 
 ```bash
 # Push branch to remote
-git push -u origin skill/kimi-search
+git push -u origin feat/kimi-search
 
 # Output will include PR creation URL
-# Example: https://github.com/alexander-naumov/alexander-skills/pull/new/skill/kimi-search
+# Example: https://github.com/alexander-naumov/alexander-skills/pull/new/feat/kimi-search
 ```
 
 **PR description template:**
@@ -321,10 +321,10 @@ git checkout main
 git pull origin main
 
 # Delete local feature branch
-git branch -d skill/kimi-search
+git branch -d feat/kimi-search
 
 # (Optional) Delete remote branch
-git push origin --delete skill/kimi-search
+git push origin --delete feat/kimi-search
 
 # Verify clean state
 git status
@@ -354,7 +354,7 @@ git branch -vv
 
 | Type | Pattern | Example |
 |------|---------|---------|
-| New skill | `skill/<name>` | `skill/kimi-search` |
+| New skill | `feat/<name>` | `feat/kimi-search` |
 | Bug fix | `fix/<skill>-<issue>` | `fix/kimi-mem-crash` |
 | Documentation | `docs/<what>` | `docs/install-guide` |
 | MCP server | `mcp/<name>` | `mcp/filesystem-server` |
