@@ -192,12 +192,74 @@ flowchart LR
 - Mermaid CLI - `npm install -g @mermaid-js/mermaid-cli` then `mmdc -i input.mmd -o output.png`
 - Docker - `docker run --rm -v $(pwd):/data minlag/mermaid-cli -i /data/input.mmd -o /data/output.png`
 
+## Troubleshooting
+
+### Error: `Expecting 'TAGEND', 'STR', ... got 'DIAMOND_START'`
+
+**Symptom:**
+```
+Parse error on line X:
+...ier        Barrier[{"⛔ Barrier<br/>等待全部
+----------------------^
+Expecting 'TAGEND', 'STR', 'MD_STR', 'UNICODE_TEXT', 'TEXT', 'TAGSTART', got 'DIAMOND_START'
+```
+
+**Cause:** Incorrect nesting of node shapes. Diamond nodes `{...}` cannot contain square brackets `[...]` inside.
+
+**Incorrect:**
+```mermaid
+flowchart TB
+    Barrier[{"⛔ Barrier<br/>text"}]  %% ❌ Wrong!
+```
+
+**Correct:**
+```mermaid
+flowchart TB
+    Barrier{"⛔ Barrier<br/>text"}   %% ✅ Correct!
+```
+
+### Error: `note right of` in flowchart
+
+**Symptom:** `note right of NodeName` causes parse error in flowchart.
+
+**Cause:** `note right of` is only valid in `sequenceDiagram`, not in `flowchart`.
+
+**Incorrect:**
+```mermaid
+flowchart TB
+    A --> B
+    note right of B
+        Some note
+    end note
+```
+
+**Correct:**
+```mermaid
+flowchart TB
+    A --> B
+    Note["💡 Some note"]
+    style Note fill:#ffffcc
+```
+
+### Node Shape Reference
+
+| Shape | Syntax | Example |
+|-------|--------|---------|
+| Rectangle | `[text]` | `A["Hello"]` |
+| Stadium | `(text)` | `A("Start")` |
+| Diamond | `{text}` | `A{"Decision"}` |
+| Circle | `((text))` | `A((Circle))` |
+| Hexagon | `{{text}}` | `A{{Hexagon}}` |
+
+**Rule:** Diamond nodes `{...}` cannot contain other bracket types inside.
+
 ## Common Pitfalls
 
 - **Breaking characters** - Avoid `{}` in comments, use proper escape sequences for special characters
 - **Syntax errors** - Misspellings break diagrams; validate syntax in Mermaid Live
 - **Overcomplexity** - Split complex diagrams into multiple focused views
 - **Missing relationships** - Document all important connections between entities
+- **Wrong diagram type for elements** - Use `note right of` only in sequenceDiagram, not flowchart
 
 ## When to Create Diagrams
 
