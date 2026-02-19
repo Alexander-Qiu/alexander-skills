@@ -17,6 +17,7 @@ Personal Agent Skills library for Kimi Code CLI and other AI agents.
 | [canvas-design](./skills/canvas-design/) | Create beautiful visual art in PNG/PDF | ✅ Ready | 🔵 Claude |
 | [dispatching-parallel-agents](./skills/dispatching-parallel-agents/) | Dispatch 2+ independent tasks in parallel | ✅ Ready | 🔵 Claude |
 | [doc-coauthoring](./skills/doc-coauthoring/) | Structured workflow for co-authoring documentation | ✅ Ready | 🔵 Claude |
+| [deep-requirement-analysis](./skills/deep-requirement-analysis/) | Production-grade task planner with progressive disclosure | ✅ Ready | 🟢 Kimi |
 | [docx](./skills/docx/) | Create and manipulate Word documents | ✅ Ready | 🔵 Claude |
 | [executing-plans](./skills/executing-plans/) | Execute written implementation plans | ✅ Ready | 🔵 Claude |
 | [finishing-a-development-branch](./skills/finishing-a-development-branch/) | Complete development work with structured options | ✅ Ready | 🔵 Claude |
