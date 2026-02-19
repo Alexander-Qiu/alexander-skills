@@ -1,0 +1,8 @@
+{
+  "name": "beautiful-mermaid-test",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "beautiful-mermaid": "^0.1.3"
+  }
+}
