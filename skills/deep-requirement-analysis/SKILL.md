@@ -47,6 +47,7 @@ description: Use ONLY when user explicitly says "使用深度分析", "深度分
 **必须用户明确说以下关键词才触发：**
 - "使用深度分析"
 - "深度分析"
+- "深度思考"
 - "deep analysis"
 - "系统分析"
 - "完整分析"
@@ -175,14 +176,14 @@ description: Use ONLY when user explicitly says "使用深度分析", "深度分
 **执行方式**:
 ```
 1. 根据任务类型和模式，选择需要加载的子代理模板
-2. 从 agents/ 目录读取对应的 .md 文件
+2. 从 references/agents/ 目录读取对应的 .md 文件
 3. 使用模板中的"Analysis Dimensions"作为检查清单
 4. 模拟子代理视角进行分析（而非真正派遣子代理）
 ```
 
-**子代理模板清单** (位于 agents/):
+**子代理模板清单** (位于 references/agents/):
 ```
-agents/
+references/agents/
 ├── technical/
 │   ├── feasibility_agent.md      # 可行性分析
 │   ├── security_agent.md         # 安全分析
@@ -195,6 +196,11 @@ agents/
     ├── testing_agent.md          # 测试策略
     └── deployment_agent.md       # 部署方案
 ```
+
+**参考文档：**
+- `references/analysis-patterns.md` - 常见分析模式参考
+- `references/question-bank.md` - 问题库模板
+- `references/cases/` - 典型案例（快速模式/标准模式）
 
 **按需加载策略**:
 - **快速模式**: 仅 feasibility_agent
@@ -376,9 +382,11 @@ output/
 
 ## 部署前检查清单
 
-- [ ] agents/ 目录存在且包含子代理模板
+- [ ] references/agents/ 目录存在且包含子代理模板
 - [ ] scripts/ 目录存在且脚本可执行
+- [ ] tests/ 目录存在且包含对应测试（每个脚本至少一个测试）
 - [ ] references/cases/ 目录存在且包含示例
+- [ ] 运行 `pytest tests/` 所有测试通过
 - [ ] 测试过快速模式的完整流程
 - [ ] 测试过标准模式的完整流程
 - [ ] 确认与 brainstorming skill 的集成正常
@@ -386,9 +394,10 @@ output/
 
 ## 版本信息
 
-- **Version**: v2.1 - Production Ready
+- **Version**: v2.2 - Production Ready
 - **Last Updated**: 2024-02-19
 - **Changelog**:
+  - v2.2: 修复目录结构规范 - 移动 agents/ 到 references/agents/，添加 tests/ 目录，修复脚本权限，添加"深度思考"触发词
   - v2.1: 修复 Phase 编号重复，明确执行语义，添加部署检查清单
   - v2.0: 重大重构 - 显式触发、三层模式、渐进披露、子代理模板库
   - v1.0: 初始版本 - 固定5阶段流程
