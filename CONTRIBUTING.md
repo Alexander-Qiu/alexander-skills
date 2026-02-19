@@ -6,7 +6,7 @@ Thank you for your interest in contributing! This document outlines the developm
 
 1. **Fork the repository** (if external contributor)
 2. **Clone locally**
-3. **Create feature branch**: `git checkout -b feature/my-skill`
+3. **Create feature branch**: `git checkout -b feat/my-skill`
 4. **Make changes and test**
 5. **Commit with clear message**
 6. **Push and create PR**
@@ -17,7 +17,7 @@ Thank you for your interest in contributing! This document outlines the developm
 
 | Prefix | Use For | Example |
 |--------|---------|---------|
-| `feature/` | New skills | `feature/kimi-search` |
+| `feat/` | New skills | `feat/kimi-search` |
 | `fix/` | Bug fixes | `fix/kimi-mem-error` |
 | `docs/` | Documentation | `docs/install-guide` |
 | `update/` | Updates to existing | `update/kimi-mem-v2` |
@@ -209,7 +209,7 @@ git checkout main
 git pull origin main
 
 # 2. 依次合并已验证的 feature 分支
-git merge feature/skill-a  # 已验证的分支 A
+git merge feat/skill-a  # 已验证的分支 A
 git merge fix/skill-b      # 已验证的分支 B
 git merge docs/update-c    # 已验证的分支 C
 
@@ -221,7 +221,7 @@ npm test       # 如有测试
 git push origin main
 
 # 5. 清理本地已合并的分支
-git branch -d feature/skill-a
+git branch -d feat/skill-a
 git branch -d fix/skill-b
 git branch -d docs/update-c
 ```
@@ -271,13 +271,13 @@ git checkout main
 git pull origin main
 
 # 2. 如果是新功能，创建临时分支开发（可选但推荐）
-git checkout -b feature/my-skill
+git checkout -b feat/my-skill
 # ... 编辑代码 ...
 # ... 本地验证 ...
 
 # 3. 直接在 main 上合并或直接在 main 上开发
 git checkout main
-git merge feature/my-skill  # 如果有临时分支
+git merge feat/my-skill  # 如果有临时分支
 
 # 4. 最终验证
 npm run build
@@ -287,7 +287,7 @@ npm test
 git push origin main
 
 # 6. 清理临时分支
-git branch -d feature/my-skill
+git branch -d feat/my-skill
 ```
 
 #### 标准 PR 流程（外部贡献者或需要 review 时）
@@ -298,7 +298,7 @@ git checkout main
 git pull origin main
 
 # 2. Create branch
-git checkout -b feature/my-skill
+git checkout -b feat/my-skill
 
 # 3. Make changes
 # ... edit files ...
@@ -313,7 +313,7 @@ git add .
 git commit -m "feat: Add my-skill with X feature"
 
 # 6. Push
-git push -u origin feature/my-skill
+git push -u origin feat/my-skill
 
 # 7. Create PR on GitHub
 # ... describe changes ...
@@ -322,7 +322,7 @@ git push -u origin feature/my-skill
 # 8. After merge, cleanup
 git checkout main
 git pull origin main
-git branch -d feature/my-skill
+git branch -d feat/my-skill
 ```
 
 #### Alexander Qiu 批量合并流程（多个已验证分支）
@@ -335,7 +335,7 @@ git checkout main
 git pull origin main
 
 # 2. 依次合并已验证的 feature 分支
-git merge feature/skill-a  # 已验证的分支 A
+git merge feat/skill-a  # 已验证的分支 A
 git merge fix/skill-b      # 已验证的分支 B
 git merge docs/update-c    # 已验证的分支 C
 
@@ -347,7 +347,7 @@ npm test
 git push origin main
 
 # 5. 清理已合并的本地分支
-git branch -d feature/skill-a
+git branch -d feat/skill-a
 git branch -d fix/skill-b
 git branch -d docs/update-c
 ```
