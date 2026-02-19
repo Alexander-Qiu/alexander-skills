@@ -149,11 +149,12 @@ For in-depth guidance on specific diagram types, see:
 
 1. **Start Simple** - Begin with core entities/components, add details incrementally
 2. **Use Meaningful Names** - Clear labels make diagrams self-documenting
-3. **Comment Extensively** - Use `%%` comments to explain complex relationships
-4. **Keep Focused** - One diagram per concept; split large diagrams into multiple focused views
-5. **Version Control** - Store `.mmd` files alongside code for easy updates
-6. **Add Context** - Include titles and notes to explain diagram purpose
-7. **Iterate** - Refine diagrams as understanding evolves
+3. **Keep Labels Concise** - Use `<br/>` for multi-line text; aim for 20-30 chars per line
+4. **Comment Extensively** - Use `%%` comments to explain complex relationships
+5. **Keep Focused** - One diagram per concept; split large diagrams into multiple focused views
+6. **Version Control** - Store `.mmd` files alongside code for easy updates
+7. **Add Context** - Include titles and notes to explain diagram purpose
+8. **Iterate** - Refine diagrams as understanding evolves
 
 ## Configuration and Theming
 
@@ -271,6 +272,53 @@ flowchart TB
 - Special characters like `"`, `(`, `)`, `<`, `>`
 - Emoji and Unicode characters
 - HTML tags like `<br/>`
+
+### Issue: Long Labels Truncated or Not Displayed
+
+**Symptom:** Node labels with long text are truncated, overflow, or not fully visible in rendered diagrams.
+
+**Cause:** Mermaid has limited horizontal space for node labels, especially in flowcharts with many nodes.
+
+**Solutions:**
+
+**1. Use Line Breaks (`<br/>`)**
+```mermaid
+flowchart TB
+    A["This is a very long label<br/>that spans multiple lines<br/>for better readability"]
+```
+
+**2. Split into Multiple Nodes**
+```mermaid
+flowchart TB
+    A["Short Title"]
+    A --> Details["Detailed description<br/>goes here as a<br/>separate node"]
+```
+
+**3. Use Subgraphs for Organization**
+```mermaid
+flowchart TB
+    subgraph Authentication["🔐 User Authentication Flow"]
+        Login["User Login"]
+        Validate["Validate Credentials"]
+        Token["Generate JWT Token"]
+    end
+```
+
+**4. Use Notes or Annotations (Sequence Diagram)**
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant A as API
+    Note over U,A: This is a long explanation<br/>that won't fit in a message
+    U->>A: Short message
+```
+
+**Best Practices for Long Labels:**
+- Keep node labels under 20-30 characters per line
+- Use `<br/>` to break lines at logical points (after commas, before conjunctions)
+- Consider using abbreviations for commonly understood terms
+- Use subgraph titles to provide context, keeping node labels short
+- For very long explanations, link to external documentation using click events
 
 ### Node Shape Reference
 
