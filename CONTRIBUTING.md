@@ -57,6 +57,25 @@ fix: Resolve ES Module compatibility in kimi-mem
 
 ## 🧪 Testing Requirements
 
+### Pre-Testing: Brainstorm Test Points
+
+**Before running full validation, use the `brainstorming` skill to identify test points:**
+
+```bash
+# Activate brainstorming mode
+/skill:brainstorming
+
+# Then think through:
+# 1. What are the core functionalities of this skill?
+# 2. What could go wrong at each step?
+# 3. What are the edge cases?
+# 4. How should it behave in error conditions?
+```
+
+**Document test points in**: `skills/<skill-name>/TEST_BRAINSTORM.md`
+
+This helps ensure comprehensive testing coverage before running automated tests.
+
 ### Quick Validation (All Skills)
 
 Before submitting PR, run automated validation:
