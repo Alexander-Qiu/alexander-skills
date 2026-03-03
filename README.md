@@ -9,45 +9,49 @@ Personal Agent Skills library for Kimi Code CLI and other AI agents.
 | Skill | Description | Status | Platform |
 |-------|-------------|--------|----------|
 | [kimi-mem](./skills/kimi-mem/) | Cross-session memory management system | ✅ Ready | 🟢 Kimi |
-| [find-skills](./skills/find-skills/) | Discover and install agent skills | ✅ Ready | 🔵 Claude |
-| [git-workflow](./skills/git-workflow/) | Git workflow for skill development | ✅ Ready | 🟢 Kimi |
-| [algorithmic-art](./skills/algorithmic-art/) | Creating algorithmic art using p5.js | ✅ Ready | 🔵 Claude |
-| [brainstorming](./skills/brainstorming/) | Explore user intent before implementation | ✅ Ready | 🔵 Claude |
-| [brand-guidelines](./skills/brand-guidelines/) | Anthropic's official brand colors and typography | ✅ Ready | 🔵 Claude |
-| [canvas-design](./skills/canvas-design/) | Create beautiful visual art in PNG/PDF | ✅ Ready | 🔵 Claude |
-| [dispatching-parallel-agents](./skills/dispatching-parallel-agents/) | Dispatch 2+ independent tasks in parallel | ✅ Ready | 🔵 Claude |
-| [doc-coauthoring](./skills/doc-coauthoring/) | Structured workflow for co-authoring documentation | ✅ Ready | 🔵 Claude |
+| [codex-with-mcp](./skills/codex-with-mcp/) | Use Codex CLI through MCP in Kimi | ✅ Ready | 🟢 Kimi |
+| [vllm-deploy-simple](./skills/vllm-deploy-simple/) | Quick install and deploy vLLM locally | ✅ Ready | 🟣 Universal |
+| [vllm-deploy-docker](./skills/vllm-deploy-docker/) | Deploy vLLM with Docker | ✅ Ready | 🟣 Universal |
+| [find-skills](./skills/find-skills/) | Discover and install agent skills | ✅ Ready | 🟣 Universal |
+| [git-workflow](./skills/git-workflow/) | Git workflow for skill development | ✅ Ready | 🟣 Universal |
+| [algorithmic-art](./skills/algorithmic-art/) | Creating algorithmic art using p5.js | ✅ Ready | 🟣 Universal |
+| [brainstorming](./skills/brainstorming/) | Explore user intent before implementation | ✅ Ready | 🟣 Universal |
+| [brand-guidelines](./skills/brand-guidelines/) | Anthropic's official brand colors and typography | ✅ Ready | 🟣 Universal |
+| [canvas-design](./skills/canvas-design/) | Create beautiful visual art in PNG/PDF | ✅ Ready | 🟣 Universal |
+| [dispatching-parallel-agents](./skills/dispatching-parallel-agents/) | Dispatch 2+ independent tasks in parallel | ✅ Ready | 🟣 Universal |
+| [doc-coauthoring](./skills/doc-coauthoring/) | Structured workflow for co-authoring documentation | ✅ Ready | 🟣 Universal |
 | [deep-requirement-analysis](./skills/deep-requirement-analysis/) | Production-grade task planner with progressive disclosure | ✅ Ready | 🟢 Kimi |
-| [docx](./skills/docx/) | Create and manipulate Word documents | ✅ Ready | 🔵 Claude |
-| [executing-plans](./skills/executing-plans/) | Execute written implementation plans | ✅ Ready | 🔵 Claude |
-| [finishing-a-development-branch](./skills/finishing-a-development-branch/) | Complete development work with structured options | ✅ Ready | 🔵 Claude |
-| [frontend-design](./skills/frontend-design/) | Production-grade frontend interfaces | ✅ Ready | 🔵 Claude |
-| [internal-comms](./skills/internal-comms/) | Resources for internal communications | ✅ Ready | 🔵 Claude |
-| [mcp-builder](./skills/mcp-builder/) | Guide for creating MCP servers | ✅ Ready | 🔵 Claude |
-| [pdf](./skills/pdf/) | Read, extract, create, and manipulate PDFs | ✅ Ready | 🔵 Claude |
-| [pptx](./skills/pptx/) | Create and edit PowerPoint presentations | ✅ Ready | 🔵 Claude |
-| [receiving-code-review](./skills/receiving-code-review/) | Handle code review feedback properly | ✅ Ready | 🔵 Claude |
-| [requesting-code-review](./skills/requesting-code-review/) | Request comprehensive code reviews | ✅ Ready | 🔵 Claude |
-| [skill-creator](./skills/skill-creator/) | Guide for creating effective skills | ✅ Ready | 🔵 Claude |
-| [slack-gif-creator](./skills/slack-gif-creator/) | Create animated GIFs optimized for Slack | ✅ Ready | 🔵 Claude |
-| [subagent-driven-development](./skills/subagent-driven-development/) | Execute plans with independent tasks | ✅ Ready | 🔵 Claude |
-| [systematic-debugging](./skills/systematic-debugging/) | Debug bugs and test failures | ✅ Ready | 🔵 Claude |
-| [test-driven-development](./skills/test-driven-development/) | TDD workflow for features and bugfixes | ✅ Ready | 🔵 Claude |
-| [theme-factory](./skills/theme-factory/) | Styling artifacts with themes | ✅ Ready | 🔵 Claude |
-| [using-git-worktrees](./skills/using-git-worktrees/) | Create isolated git worktrees | ✅ Ready | 🔵 Claude |
-| [using-superpowers](./skills/using-superpowers/) | How to find and use skills | ✅ Ready | 🔵 Claude |
-| [verification-before-completion](./skills/verification-before-completion/) | Verify work before claiming completion | ✅ Ready | 🔵 Claude |
-| [web-artifacts-builder](./skills/web-artifacts-builder/) | Create elaborate multi-component web artifacts | ✅ Ready | 🔵 Claude |
-| [webapp-testing](./skills/webapp-testing/) | Test local web applications with Playwright | ✅ Ready | 🔵 Claude |
-| [writing-plans](./skills/writing-plans/) | Create implementation plans before coding | ✅ Ready | 🔵 Claude |
-| [writing-skills](./skills/writing-skills/) | Create and verify skills before deployment | ✅ Ready | 🔵 Claude |
-| [xlsx](./skills/xlsx/) | Create and manipulate Excel spreadsheets | ✅ Ready | 🔵 Claude |
+| [docx](./skills/docx/) | Create and manipulate Word documents | ✅ Ready | 🟣 Universal |
+| [executing-plans](./skills/executing-plans/) | Execute written implementation plans | ✅ Ready | 🟣 Universal |
+| [finishing-a-development-branch](./skills/finishing-a-development-branch/) | Complete development work with structured options | ✅ Ready | 🟣 Universal |
+| [frontend-design](./skills/frontend-design/) | Production-grade frontend interfaces | ✅ Ready | 🟣 Universal |
+| [internal-comms](./skills/internal-comms/) | Resources for internal communications | ✅ Ready | 🟣 Universal |
+| [mcp-builder](./skills/mcp-builder/) | Guide for creating MCP servers | ✅ Ready | 🟣 Universal |
+| [pdf](./skills/pdf/) | Read, extract, create, and manipulate PDFs | ✅ Ready | 🟣 Universal |
+| [pptx](./skills/pptx/) | Create and edit PowerPoint presentations | ✅ Ready | 🟣 Universal |
+| [receiving-code-review](./skills/receiving-code-review/) | Handle code review feedback properly | ✅ Ready | 🟣 Universal |
+| [requesting-code-review](./skills/requesting-code-review/) | Request comprehensive code reviews | ✅ Ready | 🟣 Universal |
+| [skill-creator](./skills/skill-creator/) | Guide for creating effective skills | ✅ Ready | 🟣 Universal |
+| [slack-gif-creator](./skills/slack-gif-creator/) | Create animated GIFs optimized for Slack | ✅ Ready | 🟣 Universal |
+| [subagent-driven-development](./skills/subagent-driven-development/) | Execute plans with independent tasks | ✅ Ready | 🟣 Universal |
+| [systematic-debugging](./skills/systematic-debugging/) | Debug bugs and test failures | ✅ Ready | 🟣 Universal |
+| [test-driven-development](./skills/test-driven-development/) | TDD workflow for features and bugfixes | ✅ Ready | 🟣 Universal |
+| [theme-factory](./skills/theme-factory/) | Styling artifacts with themes | ✅ Ready | 🟣 Universal |
+| [using-git-worktrees](./skills/using-git-worktrees/) | Create isolated git worktrees | ✅ Ready | 🟣 Universal |
+| [using-superpowers](./skills/using-superpowers/) | How to find and use skills | ✅ Ready | 🟣 Universal |
+| [verification-before-completion](./skills/verification-before-completion/) | Verify work before claiming completion | ✅ Ready | 🟣 Universal |
+| [web-artifacts-builder](./skills/web-artifacts-builder/) | Create elaborate multi-component web artifacts | ✅ Ready | 🟣 Universal |
+| [webapp-testing](./skills/webapp-testing/) | Test local web applications with Playwright | ✅ Ready | 🟣 Universal |
+| [writing-plans](./skills/writing-plans/) | Create implementation plans before coding | ✅ Ready | 🟣 Universal |
+| [writing-skills](./skills/writing-skills/) | Create and verify skills before deployment | ✅ Ready | 🟣 Universal |
+| [xlsx](./skills/xlsx/) | Create and manipulate Excel spreadsheets | ✅ Ready | 🟣 Universal |
 
 **Platform Legend:**
-- 🟢 **Kimi** - Works with Kimi Code CLI
-- 🔵 **Claude** - Works with Claude Code (may require adaptation for other agents)
+- 🟣 **Universal** - Works with both Kimi and Claude (documentation-based skills)
+- 🟢 **Kimi** - Kimi-specific (requires MCP or Kimi-specific features)
+- 🔵 **Claude** - Claude-specific (requires Claude-specific features)
 
-> ⚠️ **Note:** Most skills were originally designed for Claude Code. While the concepts are universal, some skills may need minor adaptations to work with Kimi CLI or other agents.
+> 💡 **Note:** Most documentation-based skills are marked as Universal since the core concepts work across agents. Platform-specific skills typically involve MCP integration or agent-specific tool usage.
 
 ## 🧪 Skill Validation
 
