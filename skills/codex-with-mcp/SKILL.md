@@ -218,9 +218,23 @@ Step 2: "Deep dive into auth module" → Use same SESSION_ID
 Step 3: "Suggest security improvements" → Continue session
 ```
 
+## Examples & Case Studies
+
+### MiniMax API 配置排查
+
+完整的 MiniMax + Codex 配置排查案例：
+- [troubleshooting-minimax-setup.md](examples/troubleshooting-minimax-setup.md)
+
+涵盖：
+- 400 Bad Request 错误排查
+- model_provider 配置问题
+- 模型名称不匹配问题
+- 完整正确的配置示例
+
 ## References
 
 - [Codex CLI](https://github.com/openai/codex)
 - [MCP Protocol](https://modelcontextprotocol.io)
 - [CodexMCP](https://github.com/GuDaStudio/codexmcp)
 - [Kimi MCP Docs](https://kimi.com/docs/mcp)
+- [MiniMax API 文档](https://www.minimaxi.com/document)
