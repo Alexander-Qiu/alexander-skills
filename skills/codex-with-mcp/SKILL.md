@@ -43,12 +43,14 @@ This skill enables seamless Codex integration in **Kimi** and **Claude Code**:
 
 ## Quick Reference
 
-| Task | Method |
-|------|--------|
-| Validate config | `/scripts/validate-codex-mcp.sh <wheel_path>` |
-| Health check | Use `codex` tool with test prompt |
-| Call Codex | Direct MCP tool invocation |
-| View config | `/scripts/show-mcp-config.sh` |
+| Task | Method | Doc |
+|------|--------|-----|
+| 5分钟快速入门 | - | [USAGE.md](USAGE.md) |
+| 参数速查表 | - | [QUICKREF.md](QUICKREF.md) |
+| Validate config | `/scripts/validate-codex-mcp.sh <wheel_path>` | - |
+| Health check | Use `codex` tool with test prompt | - |
+| Call Codex | Direct MCP tool invocation | - |
+| View config | `/scripts/show-mcp-config.sh` | - |
 
 ## Configuration
 
@@ -304,8 +306,18 @@ Step 3: "Suggest security improvements" → Continue session
 
 ## References
 
+### 本文档
+
+- [USAGE.md](USAGE.md) - 5分钟快速入门
+- [QUICKREF.md](QUICKREF.md) - 参数速查表
+- [examples/troubleshooting-minimax-setup.md](examples/troubleshooting-minimax-setup.md) - MiniMax 配置排查
+- [examples/claude-code-setup.md](examples/claude-code-setup.md) - Claude Code 配置指南
+
+### 外部资源
+
 - [Codex CLI](https://github.com/openai/codex)
 - [MCP Protocol](https://modelcontextprotocol.io)
 - [CodexMCP](https://github.com/GuDaStudio/codexmcp)
 - [Kimi MCP Docs](https://kimi.com/docs/mcp)
+- [Claude Code MCP Docs](https://code.claude.com/docs/en/mcp)
 - [MiniMax API 文档](https://www.minimaxi.com/document)
