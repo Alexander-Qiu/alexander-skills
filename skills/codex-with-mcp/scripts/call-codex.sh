@@ -121,7 +121,7 @@ prompt = """${PROMPT}"""
 cd_path = "${CD}"
 sandbox = "${SANDBOX}"
 session_id = "${SESSION_ID}"
-return_all = ${RETURN_ALL} == "true"
+return_all = True if "${RETURN_ALL}" == "true" else False
 
 # Start MCP server
 process = subprocess.Popen(
