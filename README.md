@@ -108,56 +108,17 @@ git clone git@github.com:Alexander-Qiu/alexander-skills.git
 cd alexander-skills
 ```
 
-### 2. Install a skill
+### 2. Use the skills
 
-> 💡 **Pro Tip:** Kimi CLI automatically loads skills from `~/.config/agents/skills/` directory.
+After cloning, simply tell your AI agent to load the skills you need. For example:
 
-#### Option A: Install a single skill
-
-```bash
-mkdir -p ~/.config/agents/skills
-cp -r skills/kimi-mem ~/.config/agents/skills/
+```
+Load the kimi-mem and git-workflow skills
 ```
 
-#### Option B: Symlink for development (auto-update when repo changes)
+Most agents will automatically discover and load skills from the `skills/` directory.
 
-```bash
-mkdir -p ~/.config/agents/skills
-ln -s $(pwd)/skills/kimi-mem ~/.config/agents/skills/kimi-mem
-```
-
-#### Option C: Bulk install all skills
-
-```bash
-# Install all skills to user-level
-mkdir -p ~/.config/agents/skills
-cp -r skills/* ~/.config/agents/skills/
-
-# Or install specific skills only
-for skill in kimi-mem git-workflow; do
-  cp -r skills/$skill ~/.config/agents/skills/
-done
-```
-
-### 3. Setup kimi-mem (if using memory skill)
-
-```bash
-cd ~/.config/agents/skills/kimi-mem
-npm install
-npm run build
-kimi mcp add --transport stdio kimi-mem -- node $(pwd)/dist/mcp/server.js
-```
-
-### 4. Use in Kimi CLI
-
-```bash
-kimi
-```
-
-Then:
-- `/skill:kimi-mem` - Load the skill manually
-- `/skill:git-workflow` - Load git workflow skill
-- Or let Kimi auto-detect based on context
+Some skills (like `kimi-mem`) require additional setup - the skill's documentation will guide you through it.
 
 ## Skill Structure
 
