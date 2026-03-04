@@ -113,7 +113,7 @@ cd alexander-skills
 After cloning, simply tell your AI agent to load the skills you need. For example:
 
 ```
-Load the kimi-mem and git-workflow skills
+Load skills from ./skills: kimi-mem, git-workflow
 ```
 
 Most agents will automatically discover and load skills from the `skills/` directory.
