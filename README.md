@@ -110,35 +110,23 @@ cd alexander-skills
 
 ### 2. Install a skill
 
-> 💡 **Pro Tip:** Kimi CLI automatically loads skills from `~/.config/agents/skills/` and `./.agents/skills/` directories. Place frequently-used skills at user-level, project-specific skills at project-level.
+> 💡 **Pro Tip:** Kimi CLI automatically loads skills from `~/.config/agents/skills/` directory.
 
-#### Option A: User-level (available in all projects)
+#### Option A: Install a single skill
 
 ```bash
 mkdir -p ~/.config/agents/skills
 cp -r skills/kimi-mem ~/.config/agents/skills/
 ```
 
-#### Option B: Project-level (only in current project)
+#### Option B: Symlink for development (auto-update when repo changes)
 
 ```bash
-mkdir -p .agents/skills
-cp -r skills/kimi-mem .agents/skills/
-```
-
-#### Option C: Symlink for development (auto-update when repo changes)
-
-```bash
-# User-level symlink
 mkdir -p ~/.config/agents/skills
 ln -s $(pwd)/skills/kimi-mem ~/.config/agents/skills/kimi-mem
-
-# Or project-level symlink
-mkdir -p .agents/skills
-ln -s $(pwd)/skills/kimi-mem .agents/skills/kimi-mem
 ```
 
-#### Option D: Bulk install all skills
+#### Option C: Bulk install all skills
 
 ```bash
 # Install all skills to user-level
@@ -154,7 +142,7 @@ done
 ### 3. Setup kimi-mem (if using memory skill)
 
 ```bash
-cd ~/.config/agents/skills/kimi-mem  # or your install path
+cd ~/.config/agents/skills/kimi-mem
 npm install
 npm run build
 kimi mcp add --transport stdio kimi-mem -- node $(pwd)/dist/mcp/server.js
