@@ -1,0 +1,3 @@
+[submodule "third-party/vllm-omni-skills"]
+	path = third-party/vllm-omni-skills
+	url = https://github.com/hsliuustc0106/vllm-omni-skills.git

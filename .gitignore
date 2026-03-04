@@ -20,3 +20,6 @@ build/
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Third-party skill symlinks (managed via submodule)
+skills/vllm-omni-*
