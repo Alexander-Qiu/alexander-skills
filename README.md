@@ -120,6 +120,22 @@ Most agents will automatically discover and load skills from the `skills/` direc
 
 Some skills (like `kimi-mem`) require additional setup - the skill's documentation will guide you through it.
 
+### 3. Install Claude Code plugins (optional)
+
+For Claude Code users, install plugins separately:
+
+```bash
+# Use the interactive installer
+cd claude-plugins
+./install.sh
+```
+
+Or see [claude-plugins/README.md](./claude-plugins/README.md) for manual installation.
+
+> **Note:** Skills and plugins have different installation methods:
+> - **Skills**: Agent auto-discovers from `skills/` directory
+> - **Plugins**: Must be installed to `~/.claude/plugins/` or `./.claude/plugins/`
+
 ## Skill Structure
 
 ```
