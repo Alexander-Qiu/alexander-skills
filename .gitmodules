@@ -1,3 +1,9 @@
 [submodule "third-party/vllm-omni-skills"]
 	path = third-party/vllm-omni-skills
 	url = https://github.com/hsliuustc0106/vllm-omni-skills.git
+[submodule "third-party/anthropics-skills"]
+	path = third-party/anthropics-skills
+	url = https://github.com/anthropics/skills.git
+[submodule "third-party/orchestra-ai-research-skills"]
+	path = third-party/orchestra-ai-research-skills
+	url = https://github.com/orchestra-research/ai-research-skills.git
