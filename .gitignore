@@ -23,3 +23,5 @@ __pycache__/
 
 # Third-party skill symlinks (managed via submodule)
 skills/vllm-omni-*
+skills/orchestra-*
+skills/anthropic-*
