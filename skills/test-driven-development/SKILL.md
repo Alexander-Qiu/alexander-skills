@@ -1,6 +1,7 @@
 ---
 name: test-driven-development
-description: Use when implementing any feature or bugfix, before writing implementation code
+description: Use this skill when implementing ANY feature or bugfix. MUST write failing test BEFORE implementation code. Required for test-driven development workflow. Triggers on TDD, write test first, test-driven, add test case.
+license: MIT
 ---
 
 # Test-Driven Development (TDD)

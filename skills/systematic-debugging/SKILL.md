@@ -1,6 +1,7 @@
 ---
 name: systematic-debugging
-description: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes
+description: Use this skill when encountering ANY bug, test failure, or unexpected behavior. MUST follow this debugging process BEFORE proposing fixes. Required for systematic root cause investigation. Triggers on debug, fix bug, test failure, investigate error.
+license: MIT
 ---
 
 # Systematic Debugging

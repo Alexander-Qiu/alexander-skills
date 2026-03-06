@@ -1,12 +1,10 @@
 ---
 name: cli-agent-caller
-description: |
-  通过 CLI 调用其他 AI Agent（Kimi、Claude 等）进行协作。
-  使用场景：(1) 需要不同模型的能力互补，(2) 并行处理多个任务，
-  (3) 验证结果一致性，(4) 利用特定 agent 的专长。
+description: Use when dispatching subagents across different AI platforms (Kimi, Claude, etc.), parallel processing multiple tasks, or validating results through multi-agent collaboration. Triggers on call other agent, multi-model verification, agent collaboration, cross-platform agent dispatch.
 author: Alexander Qiu
 version: 1.0.0
 date: 2026-03-01
+license: MIT
 ---
 
 # CLI Agent 调用器

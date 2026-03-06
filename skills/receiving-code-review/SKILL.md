@@ -1,6 +1,7 @@
 ---
 name: receiving-code-review
-description: Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable - requires technical rigor and verification, not performative agreement or blind implementation
+description: Use this skill when receiving code review feedback. ALWAYS consult this skill before implementing review suggestions, especially when feedback seems unclear or technically questionable. Triggers on code review feedback, review comments, PR feedback, addressing reviewer comments.
+license: MIT
 ---
 
 # Code Review Reception

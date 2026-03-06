@@ -1,6 +1,7 @@
 ---
 name: requesting-code-review
-description: Use when completing tasks, implementing major features, or before merging to verify work meets requirements
+description: Use this skill when completing tasks, implementing major features, or before merging to verify work meets requirements. Triggers on request review, code review, PR review, pre-merge review, review my code.
+license: MIT
 ---
 
 # Requesting Code Review

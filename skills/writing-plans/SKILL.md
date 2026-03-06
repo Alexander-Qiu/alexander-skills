@@ -1,6 +1,7 @@
 ---
 name: writing-plans
-description: Use when you have a spec or requirements for a multi-step task, before touching code
+description: Use when creating implementation plans from specifications or requirements, breaking down multi-step tasks into bite-sized chunks, or planning complex feature development before writing code. Triggers on spec, requirements, roadmap, task breakdown, implementation plan.
+license: MIT
 ---
 
 # Writing Plans

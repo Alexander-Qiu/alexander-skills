@@ -1,6 +1,7 @@
 ---
 name: subagent-driven-development
-description: Use when executing implementation plans with independent tasks in the current session
+description: Use this skill when executing implementation plans with independent tasks. MUST use this skill for subagent-driven development workflows. Dispatches fresh subagent per task with two-stage review. Triggers on parallel implementation, multi-agent workflow, distributed tasks.
+license: MIT
 ---
 
 # Subagent-Driven Development

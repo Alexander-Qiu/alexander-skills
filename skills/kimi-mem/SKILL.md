@@ -1,7 +1,7 @@
 ---
 name: kimi-mem
-description: 跨会话记忆管理系统。保存重要发现、检索历史上下文、保持项目连续性。需要 MCP 服务器支持。
-compatibility: 可选 MCP 服务器，也支持文件降级模式
+description: Use when needing to save important discoveries, retrieve historical context, or maintain project continuity across sessions. Triggers on save memory, remember this, don't forget, what did we learn, project continuity.
+license: MIT
 ---
 
 # 🧠 kimi-mem 记忆管理
