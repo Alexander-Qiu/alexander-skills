@@ -25,3 +25,6 @@ __pycache__/
 skills/vllm-omni-*
 skills/orchestra-*
 skills/anthropic-*
+
+# Review docs (generated analysis files)
+review-docs/
