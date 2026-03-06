@@ -66,16 +66,18 @@ Personal Agent Skills library for Kimi Code CLI and other AI agents.
 
 ## Agent-Specific Installation Guide
 
-### For Kimi Users
+### For Kimi / Kimi Code CLI Users
 
-Install **only** these Kimi-specific skills:
+Install **only** these Kimi-specific skills (works for both "Kimi" and "Kimi Code CLI"):
 
 | Skill | Why | Do NOT Install |
 |-------|-----|----------------|
 | `kimi-codex-mcp` | Required - Call Codex from Kimi via MCP | `codex-with-mcp` (for Claude only) |
 | `kimi-mem` | Cross-session memory management | - |
 
-**⚠️ Warning:** Do NOT install `codex-with-mcp` in Kimi. It uses Claude Code's native MCP protocol and will not work properly in Kimi environments.
+**⚠️ Warning:** Do NOT install `codex-with-mcp` in Kimi/Kimi Code CLI. It uses Claude Code's native MCP protocol and will not work properly in Kimi environments.
+
+> 💡 **Note:** "Kimi" and "Kimi Code CLI" refer to the same AI assistant. Skills marked for 🟢 **Kimi** work with both names.
 
 ### For Claude Code Users
 
