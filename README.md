@@ -28,6 +28,7 @@ Personal Agent Skills library for Kimi Code CLI and other AI agents.
 | [frontend-design](./skills/frontend-design/) | Production-grade frontend interfaces | ✅ Ready | 🟣 Universal |
 | [git-workflow](./skills/git-workflow/) | Git workflow for skill development | ✅ Ready | 🟣 Universal |
 | [internal-comms](./skills/internal-comms/) | Resources for internal communications | ✅ Ready | 🟣 Universal |
+| [kimi-codex-mcp](./skills/kimi-codex-mcp/) | Use Codex from Kimi through a compatibility MCP wrapper | ✅ Ready | 🟢 Kimi |
 | [kimi-mem](./skills/kimi-mem/) | Cross-session memory management system | ✅ Ready | 🟢 Kimi |
 | [mcp-builder](./skills/mcp-builder/) | Guide for creating MCP servers | ✅ Ready | 🟣 Universal |
 | [mermaid-diagrams](./skills/mermaid-diagrams/) | Comprehensive guide for creating software diagrams with Mermaid | ✅ Ready | 🟣 Universal |
