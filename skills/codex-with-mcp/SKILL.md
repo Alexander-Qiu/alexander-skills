@@ -1,323 +1,92 @@
 ---
 name: codex-with-mcp
-description: Use when needing to invoke Codex CLI through MCP in Kimi or Claude Code, with configuration validation, health checks, and proper session management for AI-assisted coding tasks.
+description: Use when Kimi or Claude Code needs to route work into Codex through MCP or a deterministic Codex wrapper, especially for code review, provider switching, model switching, session continuation, or debugging Codex hangs. Use this whenever the user mentions Codex MCP, `codex review`, switching `model_provider`, switching models such as `google/gemini-3-flash-preview`, or wants Kimi or Claude Code to invoke Codex with explicit provider and model control.
 ---
 
 # Codex with MCP
 
-A skill for using Codex CLI through Model Context Protocol (MCP) in **Kimi** and **Claude Code**.
+This skill connects Kimi or Claude Code to Codex CLI and keeps provider and model selection explicit.
 
-## Overview
+## Use this skill for
 
-This skill enables seamless Codex integration in **Kimi** and **Claude Code**:
-- **Configuration validation**: Verify MCP setup is correct
-- **Health check**: Test if Codex MCP server is accessible
-- **Smart invocation**: Best practices for calling Codex
-- **Session management**: Handle session persistence
-- **Multi-platform support**: Works with both Kimi and Claude Code
+- starting Codex through the native `codex mcp-server`
+- switching provider or model per request without editing the global default config
+- running review-oriented Codex flows with a specific provider/model pair
+- recovering automatically when the default Codex provider fails because of quota or auth issues
+- debugging whether failures come from MCP wiring or the downstream provider
 
-## When to Use
+## Core rules
 
-- Need Codex for code analysis, refactoring, or editing in Kimi or Claude Code
-- Want to validate MCP configuration before use
-- Need to debug Codex MCP connection issues
-- Want proper session management
-- Need consistent Codex experience across different AI assistants
-
-## Prerequisites
-
-- **For Kimi**: Kimi CLI with MCP support (`kimi --version` >= 0.1.0)
-- **For Claude Code**: Claude Code CLI with MCP support (`claude --version` >= 0.2.0)
-- `codex` CLI installed and working
-- `uvx` installed (`pip install uv`)
-- MCP server configured in `~/.kimi/mcp.json` (Kimi) or via `claude mcp` command (Claude Code)
-
-## Platform Compatibility
-
-| Feature | Kimi | Claude Code |
-|---------|------|-------------|
-| MCP Support | ✅ `~/.kimi/mcp.json` | ✅ `claude mcp add` |
-| Codex Tool | ✅ Native tool | ✅ Native tool |
-| Session Management | ✅ Full support | ✅ Full support |
-| Auto server startup | ✅ Yes | ✅ Yes |
-
-## Quick Reference
-
-| Task | Method | Doc |
-|------|--------|-----|
-| 5分钟快速入门 | - | [USAGE.md](USAGE.md) |
-| 参数速查表 | - | [QUICKREF.md](QUICKREF.md) |
-| Validate config | `/scripts/validate-codex-mcp.sh <wheel_path>` | - |
-| Health check | Use `codex` tool with test prompt | - |
-| Call Codex | Direct MCP tool invocation | - |
-| View config | `/scripts/show-mcp-config.sh` | - |
-
-## Configuration
-
-### Step 1: Install Dependencies
+1. Prefer native Codex MCP for Claude Code and any client that correctly supports the native Codex tool schema.
 
 ```bash
-# Install uv/uvx
-pip install uv
-
-# Verify codex CLI
-codex --version
+codex mcp-server
 ```
 
-## Configuration
-
-### For Kimi
-
-Edit `~/.kimi/mcp.json`:
+2. For native Codex MCP, switch provider and model in the tool call itself.
 
 ```json
 {
-  "mcpServers": {
-    "codex": {
-      "command": "uvx",
-      "args": [
-        "--from",
-        "/absolute/path/to/codexmcp-0.7.4-py3-none-any.whl",
-        "codexmcp"
-      ],
-      "env": {
-        "MINIMAX_API_KEY": "your-api-key"
-      }
-    }
+  "prompt": "Review the current changes and list the top risks.",
+  "cwd": "/path/to/repo",
+  "sandbox": "read-only",
+  "approval-policy": "never",
+  "model": "google/gemini-3-flash-preview",
+  "config": {
+    "model_provider": "zenmux"
   }
 }
 ```
 
-### For Claude Code
+3. For Kimi, first check which Codex tool schema it actually sees.
 
-Use the `claude mcp` command:
+- If Kimi sees native fields such as `prompt`, `cwd`, `model`, and `config`, use native MCP.
+- If Kimi sees legacy fields such as `PROMPT`, `cd`, `SESSION_ID`, or `profile`, do not try to force provider switching through that MCP tool. Use `scripts/codex-review.sh` or direct Codex CLI from shell instead.
 
-```bash
-# Add codex MCP server
-claude mcp add codex -s user --transport stdio -- \
-  uvx --from /absolute/path/to/codexmcp-0.7.4-py3-none-any.whl codexmcp
+4. Default provider policy for this skill:
 
-# Verify it's working
-claude mcp list
+- First try the normal Codex config with no override.
+- If that fails because of quota, auth, or provider connectivity errors, inspect `~/.codex/config.toml`.
+- If a usable `zenmux` provider exists there, retry with `zenmux` plus `google/gemini-3-flash-preview` and tell the user that a fallback was applied.
+- If no usable `zenmux` provider exists, ask the user to provide a provider id and model name explicitly.
 
-# View details
-claude mcp get codex
-```
+5. For review mode outside native MCP, use `scripts/codex-review.sh` so provider and model switching stay explicit and repeatable.
 
-**Environment Variables (Optional):**
-If you need to set API keys, you can add them when adding the server:
+## Native MCP contract
 
-```bash
-claude mcp add codex -s user -e MINIMAX_API_KEY=your-key -- \
-  uvx --from /path/to/codexmcp-0.7.4-py3-none-any.whl codexmcp
-```
+The native server exposes:
 
-**Important:** Use absolute path for the wheel file in both configurations.
+- `codex` for a new session
+- `codex-reply` for continuing an existing session
 
-### Validate Configuration
+Use these field names exactly:
 
-**For Kimi:**
-```bash
-# Run validation script
-./scripts/validate-codex-mcp.sh /path/to/codexmcp-0.7.4-py3-none-any.whl
-```
+- `prompt`
+- `cwd`
+- `sandbox`
+- `approval-policy`
+- `model`
+- `config`
+- `threadId`
 
-**For Claude Code:**
-```bash
-# Check if codex MCP server is connected
-claude mcp list
+Treat these names as legacy only:
 
-# Get detailed info
-claude mcp get codex
-```
+- `PROMPT`
+- `cd`
+- `SESSION_ID`
+- `return_all_messages`
+- `profile`
 
-## Usage
+## Which path to choose
 
-### Basic Codex Invocation
-
-Once configured, both Kimi and Claude Code automatically manage the MCP server. Just use the `codex` tool:
-
-**In Kimi:**
-```
-Use codex to analyze this codebase and suggest improvements.
-```
-
-**In Claude Code:**
-```
-Use codex to analyze this codebase and suggest improvements.
-```
-
-The AI assistant will:
-1. Auto-start MCP server if needed
-2. Call the `codex` tool with appropriate parameters
-3. Return the results
-
-**Note:** In Claude Code, you can also use `claude mcp` commands to manually manage the MCP server.
-
-### Manual Parameters
-
-For fine control, specify parameters explicitly:
-
-```json
-{
-  "PROMPT": "Refactor this function to use async/await",
-  "cd": "/path/to/project",
-  "sandbox": "read-only",
-  "return_all_messages": false,
-  "skip_git_repo_check": true
-}
-```
-
-### Session Management
-
-**Start new session:**
-```json
-{
-  "PROMPT": "Initial analysis task",
-  "cd": "/project",
-  "sandbox": "read-only"
-}
-```
-→ Response includes `SESSION_ID`
-
-**Resume session:**
-```json
-{
-  "PROMPT": "Continue the analysis",
-  "cd": "/project",
-  "sandbox": "read-only",
-  "SESSION_ID": "previous-session-id"
-}
-```
-
-## Parameters Reference
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `PROMPT` | string | ✅ | - | Task description |
-| `cd` | string | ✅ | - | Working directory |
-| `sandbox` | string | ❌ | "read-only" | Safety level: "read-only" / "workspace-write" / "danger-full-access" |
-| `SESSION_ID` | string | ❌ | "" | Session to resume |
-| `skip_git_repo_check` | bool | ❌ | true | Allow non-git dirs |
-| `return_all_messages` | bool | ❌ | false | Include reasoning |
-| `image` | array | ❌ | [] | Image attachments |
-
-## Sandbox Levels
-
-| Level | Safety | Use Case |
-|-------|--------|----------|
-| `read-only` | ⭐⭐⭐ Safest | Analysis, code review |
-| `workspace-write` | ⭐⭐ Medium | Refactoring, file edits |
-| `danger-full-access` | ⭐ Risky | System-level changes |
-
-**Recommendation:** Always start with `read-only`.
-
-## Troubleshooting
-
-### MCP Server Not Found
-
-**Symptom:** Tool not available
-**Fix:** 
-```bash
-# Check mcp.json exists and valid
-cat ~/.kimi/mcp.json
-
-# Validate with script
-./scripts/validate-codex-mcp.sh /path/to/wheel
-```
-
-### Codex Command Failed
-
-**Symptom:** Server starts but Codex fails
-**Fix:**
-```bash
-# Verify codex CLI
-codex --version
-
-# Check credentials
-codex config list
-```
-
-### Wheel File Not Found
-
-**Symptom:** uvx cannot find package
-**Fix:**
-```bash
-# Use absolute path in mcp.json
-# Check file exists
-ls -la /absolute/path/to/codexmcp-0.7.4-py3-none-any.whl
-```
-
-## Best Practices
-
-1. **Always use absolute paths** in mcp.json
-2. **Start with read-only** sandbox for new projects
-3. **Save SESSION_ID** to resume multi-step tasks
-4. **Use return_all_messages=true** for debugging
-5. **Validate config** after any changes
-
-## Example Workflows
-
-### Code Review
-```
-"Review this PR for potential issues using codex"
-→ Sandbox: read-only
-→ Return: Summary of findings
-```
-
-### Refactoring
-```
-"Refactor this module to improve readability"
-→ Sandbox: workspace-write
-→ Return: Changes made
-```
-
-### Multi-step Analysis
-```
-Step 1: "Analyze architecture" → Get SESSION_ID
-Step 2: "Deep dive into auth module" → Use same SESSION_ID
-Step 3: "Suggest security improvements" → Continue session
-```
-
-## Examples & Case Studies
-
-### MiniMax API 配置排查
-
-完整的 MiniMax + Codex 配置排查案例：
-- [troubleshooting-minimax-setup.md](examples/troubleshooting-minimax-setup.md)
-
-涵盖：
-- 400 Bad Request 错误排查
-- model_provider 配置问题
-- 模型名称不匹配问题
-- 完整正确的配置示例
-
-### Claude Code MCP 配置
-
-如何在 Claude Code 中配置 Codex MCP 服务器：
-- [claude-code-setup.md](examples/claude-code-setup.md)
-
-涵盖：
-- `claude mcp add` 命令使用
-- 验证 MCP 服务器状态
-- 与 Kimi 配置对比
-- 常见问题和解决方案
-- 实际使用示例
+- Claude Code: use native MCP and switch provider/model in tool args.
+- Kimi with native schema: use native MCP and switch provider/model in tool args.
+- Kimi with legacy Codex schema: use shell to run `scripts/codex-review.sh` or `codex exec`, not the legacy Codex MCP tool.
 
 ## References
 
-### 本文档
-
-- [USAGE.md](USAGE.md) - 5分钟快速入门
-- [QUICKREF.md](QUICKREF.md) - 参数速查表
-- [examples/troubleshooting-minimax-setup.md](examples/troubleshooting-minimax-setup.md) - MiniMax 配置排查
-- [examples/claude-code-setup.md](examples/claude-code-setup.md) - Claude Code 配置指南
-
-### 外部资源
-
-- [Codex CLI](https://github.com/openai/codex)
-- [MCP Protocol](https://modelcontextprotocol.io)
-- [CodexMCP](https://github.com/GuDaStudio/codexmcp)
-- [Kimi MCP Docs](https://kimi.com/docs/mcp)
-- [Claude Code MCP Docs](https://code.claude.com/docs/en/mcp)
-- [MiniMax API 文档](https://www.minimaxi.com/document)
+- `references/providers.md` for tested provider/model combinations
+- `references/review.md` for review workflows and Kimi guidance
+- `scripts/select-codex-target.sh` for fallback target detection
+- `scripts/call-codex.sh` for direct MCP smoke tests
+- `scripts/codex-review.sh` for deterministic review runs with provider/model switching and fallback behavior

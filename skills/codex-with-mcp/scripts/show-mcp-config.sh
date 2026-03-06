@@ -1,55 +1,34 @@
 #!/bin/bash
 
-# show-mcp-config.sh
-# Displays current MCP configuration
+set -euo pipefail
 
 MCP_CONFIG="${HOME}/.kimi/mcp.json"
+WRAPPER_PATH="$(cd "$(dirname "$0")" && pwd)/start-codex-mcp.sh"
 
-echo "📋 Current MCP Configuration"
-echo "============================"
-echo ""
+echo "Codex MCP configuration"
+echo "======================="
+echo
 
 if [[ -f "$MCP_CONFIG" ]]; then
     echo "Config location: $MCP_CONFIG"
-    echo ""
-    echo "Content:"
-    echo "--------"
-    cat "$MCP_CONFIG" | python3 -m json.tool 2>/dev/null || cat "$MCP_CONFIG"
+    echo
+    python3 -m json.tool "$MCP_CONFIG" 2>/dev/null || cat "$MCP_CONFIG"
 else
-    echo "❌ Configuration file not found: $MCP_CONFIG"
-    echo ""
-    echo "Create one with the following content:"
-    echo '{'
-    echo '  "mcpServers": {'
-    echo '    "codex": {'
-    echo '      "command": "uvx",'
-    echo '      "args": ['
-    echo '        "--from",'
-    echo '        "/absolute/path/to/codexmcp-0.7.4-py3-none-any.whl",'
-    echo '        "codexmcp"'
-    echo '      ]'
-    echo '    }'
-    echo '  }'
-    echo '}'
+    echo "No Kimi MCP config found at $MCP_CONFIG"
+    echo
+    echo "Recommended native config:"
+    cat <<CONFIG
+{
+  "mcpServers": {
+    "codex": {
+      "command": "$WRAPPER_PATH",
+      "args": []
+    }
+  }
+}
+CONFIG
 fi
 
-echo ""
-echo "📁 Available MCP Servers:"
-echo "------------------------"
-if [[ -f "$MCP_CONFIG" ]]; then
-    python3 -c "
-import json
-try:
-    with open('$MCP_CONFIG') as f:
-        config = json.load(f)
-    servers = config.get('mcpServers', {})
-    if servers:
-        for name, cfg in servers.items():
-            cmd = cfg.get('command', 'N/A')
-            print(f'  • {name}: {cmd}')
-    else:
-        print('  (none configured)')
-except Exception as e:
-    print(f'  Error: {e}')
-"
-fi
+echo
+echo "Wrapper script: $WRAPPER_PATH"
+echo "Optional env file: ${CODEX_MCP_ENV_FILE:-$HOME/.codex/codex-mcp.env}"
