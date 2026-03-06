@@ -13,9 +13,8 @@ from fastmcp.server import FastMCP
 SERVER = FastMCP("kimi-codex-mcp")
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-CODEX_WITH_MCP_DIR = SCRIPT_DIR.parent.parent / "codex-with-mcp" / "scripts"
-CALL_CODEX = CODEX_WITH_MCP_DIR / "call-codex.sh"
-START_CODEX_MCP = CODEX_WITH_MCP_DIR / "start-codex-mcp.sh"
+CALL_CODEX = SCRIPT_DIR / "call-codex.sh"
+START_CODEX_MCP = SCRIPT_DIR / "start-native-codex-mcp.sh"
 
 Route = Literal["default", "ondemand-gemini"]
 CALL_CODEX_TIMEOUT_SECONDS = int(os.environ.get("KIMI_CODEX_CALL_TIMEOUT_SECONDS", "30"))

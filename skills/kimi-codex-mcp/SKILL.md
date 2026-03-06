@@ -24,7 +24,7 @@ Do not point Kimi directly at native `codex mcp-server` unless you are debugging
 
 Kimi's MCP loading path connects once to list tools, then reconnects to call tools.
 Codex's native MCP server rejects repeated `initialize` on the same client lifecycle.
-The compatibility wrapper avoids that path by exposing Kimi-friendly MCP tools and delegating each call to `../codex-with-mcp/scripts/call-codex.sh`.
+The compatibility wrapper avoids that path by exposing Kimi-friendly MCP tools and delegating each call through the local `scripts/call-codex.sh`.
 
 ## Recommended setup
 
@@ -76,4 +76,5 @@ Both return a JSON object with:
 
 - `scripts/start-kimi-codex-mcp.sh` to launch the wrapper
 - `scripts/kimi_codex_mcp_server.py` for the Kimi-compatible server
-- `../codex-with-mcp/scripts/call-codex.sh` for the actual Codex invocation
+- `scripts/call-codex.sh` for the local MCP caller
+- `scripts/start-native-codex-mcp.sh` for launching the native Codex MCP server
