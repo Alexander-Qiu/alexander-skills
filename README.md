@@ -145,6 +145,8 @@ Load skills from ./skills: kimi-mem, git-workflow
 
 Most agents will automatically discover and load skills from the `skills/` directory.
 
+> ⚠️ **Important for AI Agents:** When loading skills, some files may be **symbolic links** (e.g., third-party skills linked from `third-party/`). You **MUST** follow these links and load the **actual file content** from the hard path. Do NOT skip or ignore symlinked files - resolve them to their target and load the real content into your context.
+
 Some skills (like `kimi-mem`) require additional setup - the skill's documentation will guide you through it.
 
 ### 3. Install Claude Code plugins (optional)
