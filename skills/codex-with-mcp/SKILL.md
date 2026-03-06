@@ -46,8 +46,9 @@ codex mcp-server
 4. Default provider policy for this skill:
 
 - First try the normal Codex config with no override.
-- If that fails because of quota, auth, or provider connectivity errors, inspect `~/.codex/config.toml`.
-- If a usable `zenmux` provider exists there, retry with `zenmux` plus `google/gemini-3-flash-preview` and tell the user that a fallback was applied.
+- If that fails because of quota, auth, or provider connectivity errors, inspect `~/.codex/config.toml` first.
+- If no usable fallback provider is defined there, inspect `~/.codex/codex-mcp.env` for `ZENMUX_ONDEMAND_API_KEY`.
+- If a usable `zenmux` fallback exists in either place, retry with `zenmux` plus `google/gemini-3-flash-preview` and tell the user that a fallback was applied.
 - If no usable `zenmux` provider exists, ask the user to provide a provider id and model name explicitly.
 
 5. For review mode outside native MCP, use `scripts/codex-review.sh` so provider and model switching stay explicit and repeatable.

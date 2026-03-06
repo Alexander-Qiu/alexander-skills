@@ -21,30 +21,15 @@ CALL_CODEX_TIMEOUT_SECONDS = int(os.environ.get("KIMI_CODEX_CALL_TIMEOUT_SECONDS
 
 
 def _ondemand_server_cmd() -> str:
-    key = os.environ.get("ZENMUX_ONDEMAND_API_KEY")
-    if not key:
-        raise RuntimeError("ZENMUX_ONDEMAND_API_KEY is required for route=ondemand-gemini")
-
-    inner = " ".join(
+    return " ".join(
         [
             shlex.quote(str(START_CODEX_MCP)),
             "-c",
             shlex.quote("model_provider=zenmux"),
             "-c",
             shlex.quote('model=google/gemini-3-flash-preview'),
-            "-c",
-            shlex.quote('model_providers.zenmux.name="ZenMux On-Demand"'),
-            "-c",
-            shlex.quote('model_providers.zenmux.base_url="https://zenmux.ai/api/v1"'),
-            "-c",
-            shlex.quote(
-                f'model_providers.zenmux.experimental_bearer_token="{key}"'
-            ),
-            "-c",
-            shlex.quote('model_providers.zenmux.wire_api="responses"'),
         ]
     )
-    return f"bash -lc {shlex.quote(inner)}"
 
 
 def _build_command(
@@ -70,7 +55,16 @@ def _build_command(
     ]
 
     if route == "ondemand-gemini":
-        cmd.extend(["--server-cmd", _ondemand_server_cmd()])
+        cmd.extend(
+            [
+                "--provider",
+                "zenmux",
+                "--model",
+                "google/gemini-3-flash-preview",
+                "--server-cmd",
+                _ondemand_server_cmd(),
+            ]
+        )
 
     if developer_instructions:
         cmd.extend(["--developer-instructions", developer_instructions])
@@ -140,20 +134,6 @@ def _run_codex(
     return payload
 
 
-def _should_fallback(exc: RuntimeError) -> bool:
-    text = str(exc).lower()
-    return (
-        "no mcp response" in text
-        or "connection closed" in text
-        or "timed out" in text
-        or "quota" in text
-        or "forbidden" in text
-        or "unauthorized" in text
-        or "missing api key" in text
-        or "stream disconnected" in text
-    )
-
-
 @SERVER.tool
 def codex(
     prompt: str,
@@ -164,32 +144,14 @@ def codex(
     developer_instructions: str | None = None,
 ) -> dict[str, str]:
     """Run Codex through a Kimi-friendly MCP wrapper."""
-    try:
-        return _run_codex(
-            prompt=prompt,
-            cwd=cwd,
-            route=route,
-            sandbox=sandbox,
-            approval_policy=approval_policy,
-            developer_instructions=developer_instructions,
-        )
-    except RuntimeError as exc:
-        if route != "default" or not os.environ.get("ZENMUX_ONDEMAND_API_KEY"):
-            raise
-        if not _should_fallback(exc):
-            raise
-
-        payload = _run_codex(
-            prompt=prompt,
-            cwd=cwd,
-            route="ondemand-gemini",
-            sandbox=sandbox,
-            approval_policy=approval_policy,
-            developer_instructions=developer_instructions,
-        )
-        payload["fallbackFrom"] = "default"
-        payload["fallbackReason"] = str(exc)
-        return payload
+    return _run_codex(
+        prompt=prompt,
+        cwd=cwd,
+        route=route,
+        sandbox=sandbox,
+        approval_policy=approval_policy,
+        developer_instructions=developer_instructions,
+    )
 
 
 @SERVER.tool

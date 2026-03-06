@@ -101,7 +101,12 @@ fi
 run_once() {
     local provider="$1"
     local model="$2"
+    local server_cmd_override="${3:-}"
     local effective_server_cmd="$SERVER_CMD"
+
+    if [[ -n "$server_cmd_override" ]]; then
+        effective_server_cmd="$server_cmd_override"
+    fi
 
     if [[ -n "$provider" ]]; then
         effective_server_cmd+=" -c model_provider=$provider"
@@ -267,6 +272,7 @@ fallback_available=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["ha
 fallback_message=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["message"])' <<< "$fallback_json")
 fallback_provider=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["fallback_provider"])' <<< "$fallback_json")
 fallback_model=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["fallback_model"])' <<< "$fallback_json")
+fallback_server_cmd=$(python3 -c 'import json,sys; print(json.load(sys.stdin).get("fallback_server_cmd", ""))' <<< "$fallback_json")
 
 if [[ "$fallback_available" != "True" ]]; then
     printf '%s\n' "$first_json" >&2
@@ -277,7 +283,7 @@ fi
 
 echo "$fallback_message" >&2
 set +e
-second_json=$(run_once "$fallback_provider" "$fallback_model")
+second_json=$(run_once "$fallback_provider" "$fallback_model" "$fallback_server_cmd")
 second_status=$?
 set -e
 python3 -c 'import json,sys; data=json.load(sys.stdin); print(json.dumps(data["structuredContent"], ensure_ascii=False, indent=2))' <<< "$second_json"

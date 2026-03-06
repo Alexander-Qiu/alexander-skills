@@ -57,9 +57,11 @@ The wrapper exposes two routes through the same `codex` tool:
 - `default`: use Codex's normal subscription-backed configuration
 - `ondemand-gemini`: use `zenmux` with `google/gemini-3-flash-preview`
 
-For `ondemand-gemini`, the wrapper injects provider and model at server startup time instead of passing the model through the Codex MCP tool arguments. This matches the currently working path.
+For `default`, the wrapper first tries the normal logged-in Codex configuration with no override.
+If that fails because of quota, auth, or provider connectivity issues, it checks `~/.codex/config.toml` first and then `~/.codex/codex-mcp.env` for `ZENMUX_ONDEMAND_API_KEY`.
+If a usable fallback exists, it retries with `zenmux` and `google/gemini-3-flash-preview`.
 
-For `default`, the wrapper first tries the subscription-backed route. If that path returns a known transport or provider failure and `ZENMUX_ONDEMAND_API_KEY` is available, it automatically retries through `ondemand-gemini`.
+Use `ondemand-gemini` only when you want to force the fallback route immediately instead of waiting for the default route to fail first.
 
 ## Tools
 

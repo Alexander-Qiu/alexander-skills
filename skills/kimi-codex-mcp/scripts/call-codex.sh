@@ -3,12 +3,16 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+RESOLVER="$SCRIPT_DIR/select-codex-target.sh"
 
 PROMPT=""
 CWD="$(pwd)"
 SANDBOX="read-only"
 APPROVAL_POLICY="never"
 THREAD_ID=""
+MODEL=""
+PROVIDER=""
+PROFILE=""
 DEVELOPER_INSTRUCTIONS=""
 SERVER_CMD=""
 
@@ -34,6 +38,18 @@ while [[ $# -gt 0 ]]; do
             THREAD_ID="$2"
             shift 2
             ;;
+        --model)
+            MODEL="$2"
+            shift 2
+            ;;
+        --provider)
+            PROVIDER="$2"
+            shift 2
+            ;;
+        --profile)
+            PROFILE="$2"
+            shift 2
+            ;;
         --developer-instructions)
             DEVELOPER_INSTRUCTIONS="$2"
             shift 2
@@ -52,9 +68,17 @@ Options:
   --sandbox LEVEL                read-only|workspace-write|danger-full-access
   --approval-policy POLICY       untrusted|on-failure|on-request|never
   --thread-id ID                 Continue an existing thread
+  --model NAME                   Override Codex model
+  --provider NAME                Override config.model_provider
+  --profile NAME                 Use a Codex config profile
   --developer-instructions TEXT  Inject developer instructions
   --server-cmd CMD               Override MCP server command
   --help                         Show this help
+
+Behavior:
+  If no provider/model override is supplied and the first call fails with a
+  quota/auth/provider error, this script checks ~/.codex/config.toml first and
+  then ~/.codex/codex-mcp.env for a usable `zenmux` fallback.
 USAGE
             exit 0
             ;;
@@ -74,7 +98,24 @@ if [[ -z "$SERVER_CMD" ]]; then
     SERVER_CMD="$SCRIPT_DIR/start-native-codex-mcp.sh"
 fi
 
-python3 - "$SERVER_CMD" "$PROMPT" "$CWD" "$SANDBOX" "$APPROVAL_POLICY" "$THREAD_ID" "$DEVELOPER_INSTRUCTIONS" <<'PY'
+run_once() {
+    local provider="$1"
+    local model="$2"
+    local server_cmd_override="${3:-}"
+    local effective_server_cmd="$SERVER_CMD"
+
+    if [[ -n "$server_cmd_override" ]]; then
+        effective_server_cmd="$server_cmd_override"
+    fi
+
+    if [[ -n "$provider" ]]; then
+        effective_server_cmd+=" -c model_provider=$provider"
+    fi
+    if [[ -n "$model" ]]; then
+        effective_server_cmd+=" -c model=$model"
+    fi
+
+    python3 - "$effective_server_cmd" "$PROMPT" "$CWD" "$SANDBOX" "$APPROVAL_POLICY" "$THREAD_ID" "$model" "$provider" "$PROFILE" "$DEVELOPER_INSTRUCTIONS" <<'PY'
 import json
 import shlex
 import subprocess
@@ -87,8 +128,11 @@ import sys
     sandbox,
     approval_policy,
     thread_id,
+    model,
+    provider,
+    profile,
     developer_instructions,
-) = sys.argv[1:8]
+) = sys.argv[1:11]
 
 command = shlex.split(server_cmd)
 process = subprocess.Popen(
@@ -149,8 +193,14 @@ try:
                 "sandbox": sandbox,
                 "approval-policy": approval_policy,
             }
+            if model:
+                arguments["model"] = model
+            if profile:
+                arguments["profile"] = profile
             if developer_instructions:
                 arguments["developer-instructions"] = developer_instructions
+            if provider:
+                arguments["config"] = {"model_provider": provider}
 
         tool_response = request(
             "tools/call",
@@ -183,3 +233,59 @@ finally:
     except Exception:
         process.kill()
 PY
+}
+
+needs_fallback() {
+    local text="$1"
+    [[ "$text" == *"quota"* ]] || \
+    [[ "$text" == *"403 Forbidden"* ]] || \
+    [[ "$text" == *"401 Unauthorized"* ]] || \
+    [[ "$text" == *"subscription quota limit"* ]] || \
+    [[ "$text" == *"Missing API key"* ]] || \
+    [[ "$text" == *"stream disconnected"* ]] || \
+    [[ "$text" == *"Model provider"* ]] || \
+    [[ "$text" == *"error loading config"* ]]
+}
+
+set +e
+first_json=$(run_once "$PROVIDER" "$MODEL")
+first_status=$?
+set -e
+
+if [[ $first_status -eq 0 ]]; then
+    python3 -c 'import json,sys; data=json.load(sys.stdin); print(json.dumps(data["structuredContent"], ensure_ascii=False, indent=2))' <<< "$first_json"
+    exit 0
+fi
+
+if [[ -n "$PROVIDER" || -n "$MODEL" || -n "$THREAD_ID" ]]; then
+    printf '%s\n' "$first_json" >&2
+    exit "$first_status"
+fi
+
+first_text=$(python3 -c 'import json,sys; data=json.load(sys.stdin); text=[]; text.append(json.dumps(data.get("structuredContent", {}), ensure_ascii=False)); text.extend(item.get("text", "") for item in data.get("content", []) if isinstance(item, dict)); print("\n".join(text))' <<< "$first_json")
+if ! needs_fallback "$first_text"; then
+    printf '%s\n' "$first_json" >&2
+    exit "$first_status"
+fi
+
+fallback_json="$($RESOLVER)"
+fallback_available=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["has_fallback"])' <<< "$fallback_json")
+fallback_message=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["message"])' <<< "$fallback_json")
+fallback_provider=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["fallback_provider"])' <<< "$fallback_json")
+fallback_model=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["fallback_model"])' <<< "$fallback_json")
+fallback_server_cmd=$(python3 -c 'import json,sys; print(json.load(sys.stdin).get("fallback_server_cmd", ""))' <<< "$fallback_json")
+
+if [[ "$fallback_available" != "True" ]]; then
+    printf '%s\n' "$first_json" >&2
+    echo "$fallback_message" >&2
+    echo "Please provide --provider and --model explicitly." >&2
+    exit "$first_status"
+fi
+
+echo "$fallback_message" >&2
+set +e
+second_json=$(run_once "$fallback_provider" "$fallback_model" "$fallback_server_cmd")
+second_status=$?
+set -e
+python3 -c 'import json,sys; data=json.load(sys.stdin); print(json.dumps(data["structuredContent"], ensure_ascii=False, indent=2))' <<< "$second_json"
+exit "$second_status"

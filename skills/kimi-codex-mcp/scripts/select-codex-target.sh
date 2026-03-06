@@ -7,9 +7,9 @@ DEFAULT_FALLBACK_MODEL="google/gemini-3-flash-preview"
 CONFIG_FILE="${CODEX_CONFIG_FILE:-$HOME/.codex/config.toml}"
 ENV_FILE="${CODEX_MCP_ENV_FILE:-$HOME/.codex/codex-mcp.env}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-START_MCP="$SCRIPT_DIR/start-codex-mcp.sh"
+START_NATIVE_MCP="$SCRIPT_DIR/start-native-codex-mcp.sh"
 
-python3 - "$CONFIG_FILE" "$ENV_FILE" "$DEFAULT_FALLBACK_PROVIDER" "$DEFAULT_FALLBACK_MODEL" "$START_MCP" <<'PY'
+python3 - "$CONFIG_FILE" "$ENV_FILE" "$DEFAULT_FALLBACK_PROVIDER" "$DEFAULT_FALLBACK_MODEL" "$START_NATIVE_MCP" <<'PY'
 import json
 import pathlib
 import shlex
@@ -19,7 +19,7 @@ config_path = pathlib.Path(sys.argv[1]).expanduser()
 env_path = pathlib.Path(sys.argv[2]).expanduser()
 fallback_provider = sys.argv[3]
 fallback_model = sys.argv[4]
-start_mcp = sys.argv[5]
+start_native_mcp = sys.argv[5]
 
 try:
     import tomllib
@@ -38,6 +38,7 @@ def load_env_file(path: pathlib.Path) -> dict[str, str]:
         key, value = line.split("=", 1)
         data[key.strip()] = value.strip().strip("'").strip('"')
     return data
+
 
 result = {
     "has_fallback": False,
@@ -75,7 +76,7 @@ if not result["has_fallback"]:
     if key:
         server_cmd = " ".join(
             [
-                shlex.quote(start_mcp),
+                shlex.quote(start_native_mcp),
                 "-c",
                 shlex.quote("model_provider=zenmux"),
                 "-c",
