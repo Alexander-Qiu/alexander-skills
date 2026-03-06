@@ -29,20 +29,23 @@ If the tool fields are `prompt`, `cwd`, `model`, and `config`, use the same nati
 
 ### Case 2: Kimi exposes the legacy Codex schema
 
-If Kimi exposes fields such as `PROMPT`, `cd`, `SESSION_ID`, or `profile`, do not try to switch provider with that MCP tool.
+If Kimi exposes fields such as `PROMPT`, `cd`, `SESSION_ID`, or `profile`, do not try to switch provider with that MCP tool and do not compose raw `codex exec` commands yourself.
 
-Use the shell wrapper instead:
+Use the shell wrapper instead, and run it exactly as written:
 
 ```bash
 scripts/codex-review.sh --uncommitted
 ```
 
-That wrapper follows the skill's default policy:
+That wrapper follows the default Kimi review policy:
 
-1. Try the normal Codex config first.
-2. If that fails because of quota, auth, or provider errors, inspect `~/.codex/config.toml`.
-3. If a usable `zenmux` provider exists, retry with `google/gemini-3-flash-preview` and tell the user a fallback was applied.
-4. If no usable fallback exists, ask the user to provide `--provider` and `--model` explicitly.
+1. Review with the normal Codex configuration first.
+2. If that fails because of quota, auth, or provider connectivity problems, inspect `~/.codex/config.toml`.
+3. If a usable `zenmux` provider exists, retry with:
+   - provider: `zenmux`
+   - model: `google/gemini-3-flash-preview`
+4. If the fallback is used, tell the user that the review was retried through the on-demand ZenMux Gemini path.
+5. If no usable fallback exists, ask the user to provide `--provider` and `--model` explicitly.
 
 This is the preferred Kimi path when explicit provider/model switching matters.
 

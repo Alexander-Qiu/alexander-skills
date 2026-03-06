@@ -41,7 +41,7 @@ codex mcp-server
 3. For Kimi, first check which Codex tool schema it actually sees.
 
 - If Kimi sees native fields such as `prompt`, `cwd`, `model`, and `config`, use native MCP.
-- If Kimi sees legacy fields such as `PROMPT`, `cd`, `SESSION_ID`, or `profile`, do not try to force provider switching through that MCP tool. Use `scripts/codex-review.sh` or direct Codex CLI from shell instead.
+- If Kimi sees legacy fields such as `PROMPT`, `cd`, `SESSION_ID`, or `profile`, do not try to force provider switching through that MCP tool. Do not hand-write `codex exec` commands. Run `scripts/codex-review.sh` exactly.
 
 4. Default provider policy for this skill:
 
@@ -81,7 +81,7 @@ Treat these names as legacy only:
 
 - Claude Code: use native MCP and switch provider/model in tool args.
 - Kimi with native schema: use native MCP and switch provider/model in tool args.
-- Kimi with legacy Codex schema: use shell to run `scripts/codex-review.sh` or `codex exec`, not the legacy Codex MCP tool.
+- Kimi with legacy Codex schema: use shell to run `scripts/codex-review.sh` exactly, not the legacy Codex MCP tool and not hand-written `codex exec` commands.
 
 ## References
 

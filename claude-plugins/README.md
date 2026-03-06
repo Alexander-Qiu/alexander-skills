@@ -27,7 +27,7 @@ Alexander Skills 的 Claude Code Plugins 集合，包含 15 个精选插件，�
 | Plugin | 版本 | 描述 | 位置 |
 |--------|------|------|------|
 | **skill-codex** | 1.1.0 | 委托提示给 OpenAI Codex CLI 进行代码分析 | `plugins/skill-codex/` |
-| **claude-mem** | 10.0.7 | 持久化内存系统，跨会话保留上下文 | `claude-mem/` (完整项目) |
+| **claude-mem** | 10.0.7 | 持久化内存系统，跨会话保留上下文 | `marketplace/claude-mem/` (完整项目) |
 
 ## 快速安装
 
@@ -83,9 +83,10 @@ claude-plugins/
 │   ├── agent-sdk-dev/
 │   ├── code-review/
 │   └── ...
-└── claude-mem/         # 完整插件项目 (含 skill)
-    ├── plugin/         # 编译后的插件
-    └── plugin/skills/mem-search/  # Skill 文件
+└── marketplace/        # 第三方完整插件项目
+    └── claude-mem/     # 含源码、测试、文档的完整项目
+        ├── plugin/     # 编译后的插件
+        └── plugin/skills/mem-search/
 ```
 
 ## 每个 Plugin 的详细说明

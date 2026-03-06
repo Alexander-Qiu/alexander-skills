@@ -79,6 +79,10 @@ if [[ -n "$PROMPT" && ( "$UNCOMMITTED" == "true" || -n "$BASE" || -n "$COMMIT" )
     exit 1
 fi
 
+if [[ "$UNCOMMITTED" != "true" && -z "$BASE" && -z "$COMMIT" && -z "$PROMPT" ]]; then
+    UNCOMMITTED="true"
+fi
+
 build_cmd() {
     local provider="$1"
     local model="$2"
