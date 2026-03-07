@@ -16,7 +16,7 @@ Personal Agent Skills library for Kimi Code CLI and other AI agents.
 | [canvas-design](./skills/canvas-design/) | Create beautiful visual art in PNG/PDF | ✅ Ready | 🟣 Universal |
 | [Claudeception](./skills/Claudeception/) | Multi-layered agent collaboration framework | ✅ Ready | 🔵 Claude |
 | [cli-agent-caller](./skills/cli-agent-caller/) | Multi-agent collaboration via CLI | ✅ Ready | 🟣 Universal |
-| [kimi-codex-mcp](./skills/kimi-codex-mcp/) | Use Codex from Kimi through MCP wrapper | ✅ Ready | 🟢 Kimi |
+| [kimi-codex-review](./skills/kimi-codex-review/) | Use Codex from Kimi via CLI (code review, refactoring) | ✅ Ready | 🟢 Kimi |
 | [deep-requirement-analysis](./skills/deep-requirement-analysis/) | Production-grade task planner with progressive disclosure | ✅ Ready | 🟢 Kimi |
 | [dispatching-parallel-agents](./skills/dispatching-parallel-agents/) | Dispatch 2+ independent tasks in parallel | ✅ Ready | 🟣 Universal |
 | [doc-coauthoring](./skills/doc-coauthoring/) | Structured workflow for co-authoring documentation | ✅ Ready | 🟣 Universal |
@@ -72,10 +72,10 @@ Install **only** these Kimi-specific skills (works for both "Kimi" and "Kimi Cod
 
 | Skill | Why | Do NOT Install |
 |-------|-----|----------------|
-| `kimi-codex-mcp` | Required - Call Codex from Kimi via MCP | - |
+| `kimi-codex-review` | Required - Call Codex from Kimi via CLI | - |
 | `kimi-mem` | Cross-session memory management | - |
 
-**Note:** `kimi-codex-mcp` is the unified Codex integration skill for Kimi. It handles both normal Codex calls and fallback to on-demand routes.
+**Note:** `kimi-codex-review` uses direct Codex CLI (`codex exec review`) with automatic provider fallback (default → zenmux → p2077). No MCP, no timeout issues.
 
 > 💡 **Note:** "Kimi" and "Kimi Code CLI" refer to the same AI assistant. Skills marked for 🟢 **Kimi** work with both names.
 
