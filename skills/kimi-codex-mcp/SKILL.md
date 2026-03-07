@@ -19,12 +19,13 @@ Use this skill for Kimi-specific Codex integration.
 
 For Kimi, prefer the compatibility MCP wrapper in `scripts/start-kimi-codex-mcp.sh`.
 Do not point Kimi directly at native `codex mcp-server` unless you are debugging protocol compatibility.
+For review workflows, prefer the dedicated `codex_review` tool and keep each call stateless.
 
 ## Why
 
-Kimi's MCP loading path connects once to list tools, then reconnects to call tools.
-Codex's native MCP server rejects repeated `initialize` on the same client lifecycle.
-The compatibility wrapper avoids that path by exposing Kimi-friendly MCP tools and delegating each call through the local `scripts/call-codex.sh`.
+Kimi's MCP loading path and Codex's native MCP server are not consistently compatible in long-lived sessions.
+The compatibility wrapper keeps only the Kimi-facing edge as MCP and performs the actual work through direct `codex exec` calls.
+That removes the previous MCP-over-MCP hop and makes one-shot review calls simpler and more stable.
 
 ## Recommended setup
 
@@ -63,9 +64,28 @@ If a usable fallback exists, it retries with `zenmux` and `google/gemini-3-flash
 
 Use `ondemand-gemini` only when you want to force the fallback route immediately instead of waiting for the default route to fail first.
 
+## Recommended usage
+
+For Kimi review workflows, use a single stateless call:
+
+```text
+Use the codex_review tool once on the current repository.
+Return:
+1. findings
+2. risks
+3. a better next-step plan
+Do not call codex multiple times.
+```
+
+This is the most reliable path for prompts like:
+
+- "让 codex review 一下这个工作"
+- "让 codex 检查完后，返回问题和改进方案"
+
 ## Tools
 
 - `codex(prompt, cwd='.', route='default', sandbox='read-only', approval_policy='never', developer_instructions=None)`
+- `codex_review(prompt='Review the current uncommitted changes and propose improvements.', cwd='.', route='default')`
 - `codex_reply(thread_id, prompt, route='default')`
 
 Both return a JSON object with:
@@ -73,13 +93,14 @@ Both return a JSON object with:
 - `threadId`
 - `content`
 - `route`
+- `mode`
 
 ## Architecture
 
 ```
 Kimi CLI → MCP Config → start-kimi-codex-mcp.sh → kimi_codex_mcp_server.py
                                            ↓
-                                    call-codex.sh → codex mcp-server
+                                    call-codex.sh → codex exec
 ```
 
 ## References

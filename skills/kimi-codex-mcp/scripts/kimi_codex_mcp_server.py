@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import shlex
 import subprocess
 from pathlib import Path
 from typing import Literal
@@ -14,26 +13,15 @@ SERVER = FastMCP("kimi-codex-mcp")
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 CALL_CODEX = SCRIPT_DIR / "call-codex.sh"
-START_CODEX_MCP = SCRIPT_DIR / "start-native-codex-mcp.sh"
 
 Route = Literal["default", "ondemand-gemini"]
-CALL_CODEX_TIMEOUT_SECONDS = int(os.environ.get("KIMI_CODEX_CALL_TIMEOUT_SECONDS", "30"))
-
-
-def _ondemand_server_cmd() -> str:
-    return " ".join(
-        [
-            shlex.quote(str(START_CODEX_MCP)),
-            "-c",
-            shlex.quote("model_provider=zenmux"),
-            "-c",
-            shlex.quote('model=google/gemini-3-flash-preview'),
-        ]
-    )
+Mode = Literal["exec", "review", "resume"]
+CALL_CODEX_TIMEOUT_SECONDS = int(os.environ.get("KIMI_CODEX_CALL_TIMEOUT_SECONDS", "120"))
 
 
 def _build_command(
     *,
+    mode: Mode,
     prompt: str,
     cwd: str,
     route: Route,
@@ -44,6 +32,8 @@ def _build_command(
 ) -> list[str]:
     cmd = [
         str(CALL_CODEX),
+        "--mode",
+        mode,
         "--prompt",
         prompt,
         "--cwd",
@@ -61,8 +51,6 @@ def _build_command(
                 "zenmux",
                 "--model",
                 "google/gemini-3-flash-preview",
-                "--server-cmd",
-                _ondemand_server_cmd(),
             ]
         )
 
@@ -86,20 +74,21 @@ def _parse_output(stdout: str, stderr: str, returncode: int) -> dict[str, str]:
         raise RuntimeError(f"failed to parse call-codex.sh output: {exc}: {text}") from exc
 
     if payload.get("isError"):
-        parts = []
-        for item in payload.get("content", []):
-            if isinstance(item, dict) and "text" in item:
-                parts.append(item["text"])
-        raise RuntimeError("\n".join(parts) or "Codex returned an error")
+        raise RuntimeError(payload.get("error") or payload.get("content") or "Codex returned an error")
 
-    if "threadId" not in payload or "content" not in payload:
+    if "content" not in payload:
         raise RuntimeError(f"unexpected Codex payload: {payload}")
 
-    return {"threadId": payload["threadId"], "content": payload["content"]}
+    return {
+        "threadId": payload.get("threadId", ""),
+        "content": payload["content"],
+        "mode": payload.get("mode", "exec"),
+    }
 
 
 def _run_codex(
     *,
+    mode: Mode,
     prompt: str,
     cwd: str,
     route: Route,
@@ -109,6 +98,7 @@ def _run_codex(
     thread_id: str | None = None,
 ) -> dict[str, str]:
     cmd = _build_command(
+        mode=mode,
         prompt=prompt,
         cwd=cwd,
         route=route,
@@ -143,14 +133,30 @@ def codex(
     approval_policy: str = "never",
     developer_instructions: str | None = None,
 ) -> dict[str, str]:
-    """Run Codex through a Kimi-friendly MCP wrapper."""
+    """Run a one-shot Codex task through the Kimi-friendly wrapper."""
     return _run_codex(
+        mode="exec",
         prompt=prompt,
         cwd=cwd,
         route=route,
         sandbox=sandbox,
         approval_policy=approval_policy,
         developer_instructions=developer_instructions,
+    )
+
+
+@SERVER.tool
+def codex_review(
+    prompt: str = "Review the current uncommitted changes and propose improvements.",
+    cwd: str = ".",
+    route: Route = "default",
+) -> dict[str, str]:
+    """Review the current working tree in a single stateless Codex call."""
+    return _run_codex(
+        mode="review",
+        prompt=prompt,
+        cwd=cwd,
+        route=route,
     )
 
 
@@ -163,6 +169,7 @@ def codex_reply(
     """Continue a previous Codex thread through the Kimi-friendly wrapper."""
 
     return _run_codex(
+        mode="resume",
         prompt=prompt,
         cwd=".",
         route=route,

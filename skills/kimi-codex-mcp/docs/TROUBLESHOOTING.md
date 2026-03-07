@@ -5,7 +5,7 @@
 ### 1. MCP 调用超时 / 网络连接失败
 
 #### 症状
-- 调用 `codex()` 工具时返回错误：`call-codex.sh timed out after 30s`
+- 调用 `codex()` 或 `codex_review()` 工具时返回错误：`call-codex.sh timed out after 120s`
 - 或看到错误：`failed to refresh available models: timeout waiting for child process to exit`
 - Codex CLI 单独执行也卡住或超时
 
@@ -119,6 +119,17 @@ export KIMI_CODEX_DEBUG=1
 ```
 
 这将输出更多诊断信息到 stderr。
+
+## 当前推荐调用方式
+
+对于 Kimi 中最常见的单轮 review 场景，优先使用 `codex_review()`，并要求 Kimi 只调用一次工具。
+当前实现已经改成：
+
+```text
+Kimi MCP -> FastMCP wrapper -> codex exec
+```
+
+不再走旧的 MCP-over-MCP 路径。
 
 ---
 

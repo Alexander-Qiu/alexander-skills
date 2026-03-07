@@ -4,7 +4,9 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 RESOLVER="$SCRIPT_DIR/select-codex-target.sh"
+ENV_FILE="${CODEX_MCP_ENV_FILE:-$HOME/.codex/codex-mcp.env}"
 
+MODE="exec"
 PROMPT=""
 CWD="$(pwd)"
 SANDBOX="read-only"
@@ -14,10 +16,20 @@ MODEL=""
 PROVIDER=""
 PROFILE=""
 DEVELOPER_INSTRUCTIONS=""
-SERVER_CMD=""
+
+if [[ -f "$ENV_FILE" ]]; then
+    set -a
+    # shellcheck disable=SC1090
+    . "$ENV_FILE"
+    set +a
+fi
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        --mode)
+            MODE="$2"
+            shift 2
+            ;;
         --prompt)
             PROMPT="$2"
             shift 2
@@ -54,31 +66,28 @@ while [[ $# -gt 0 ]]; do
             DEVELOPER_INSTRUCTIONS="$2"
             shift 2
             ;;
-        --server-cmd)
-            SERVER_CMD="$2"
-            shift 2
-            ;;
         --help)
             cat <<'USAGE'
 Usage: call-codex.sh [OPTIONS]
 
 Options:
-  --prompt TEXT                  Prompt to send (required)
-  --cwd PATH                     Working directory
-  --sandbox LEVEL                read-only|workspace-write|danger-full-access
-  --approval-policy POLICY       untrusted|on-failure|on-request|never
-  --thread-id ID                 Continue an existing thread
-  --model NAME                   Override Codex model
-  --provider NAME                Override config.model_provider
-  --profile NAME                 Use a Codex config profile
-  --developer-instructions TEXT  Inject developer instructions
-  --server-cmd CMD               Override MCP server command
-  --help                         Show this help
+  --mode MODE                   exec|review|resume (default: exec)
+  --prompt TEXT                 Prompt or review instructions
+  --cwd PATH                    Working directory
+  --sandbox LEVEL               read-only|workspace-write|danger-full-access
+  --approval-policy POLICY      retained for compatibility; ignored by codex exec
+  --thread-id ID                Session id for --mode resume
+  --model NAME                  Override Codex model
+  --provider NAME               Override config.model_provider
+  --profile NAME                Use a Codex config profile
+  --developer-instructions TEXT Prepended to exec-mode prompts
+  --help                        Show this help
 
 Behavior:
-  If no provider/model override is supplied and the first call fails with a
-  quota/auth/provider error, this script checks ~/.codex/config.toml first and
-  then ~/.codex/codex-mcp.env for a usable `zenmux` fallback.
+  The default path uses direct `codex exec` or `codex exec review` calls.
+  If the first default-path call fails with quota/auth/provider errors, this
+  script checks ~/.codex/config.toml first and then ~/.codex/codex-mcp.env for
+  a usable `zenmux` fallback.
 USAGE
             exit 0
             ;;
@@ -89,151 +98,20 @@ USAGE
     esac
 done
 
-if [[ -z "$PROMPT" ]]; then
+if [[ -z "$PROMPT" && "$MODE" != "review" ]]; then
     echo "Error: --prompt is required" >&2
     exit 1
 fi
 
-if [[ -z "$SERVER_CMD" ]]; then
-    SERVER_CMD="$SCRIPT_DIR/start-native-codex-mcp.sh"
+if [[ "$MODE" == "resume" && -z "$THREAD_ID" ]]; then
+    echo "Error: --thread-id is required for --mode resume" >&2
+    exit 1
 fi
 
-run_once() {
-    local provider="$1"
-    local model="$2"
-    local server_cmd_override="${3:-}"
-    local effective_server_cmd="$SERVER_CMD"
-
-    if [[ -n "$server_cmd_override" ]]; then
-        effective_server_cmd="$server_cmd_override"
-    fi
-
-    if [[ -n "$provider" ]]; then
-        effective_server_cmd+=" -c model_provider=$provider"
-    fi
-    if [[ -n "$model" ]]; then
-        effective_server_cmd+=" -c model=$model"
-    fi
-
-    python3 - "$effective_server_cmd" "$PROMPT" "$CWD" "$SANDBOX" "$APPROVAL_POLICY" "$THREAD_ID" "$model" "$provider" "$PROFILE" "$DEVELOPER_INSTRUCTIONS" <<'PY'
-import json
-import shlex
-import subprocess
-import sys
-
-(
-    server_cmd,
-    prompt,
-    cwd,
-    sandbox,
-    approval_policy,
-    thread_id,
-    model,
-    provider,
-    profile,
-    developer_instructions,
-) = sys.argv[1:11]
-
-command = shlex.split(server_cmd)
-process = subprocess.Popen(
-    command,
-    stdin=subprocess.PIPE,
-    stdout=subprocess.PIPE,
-    stderr=subprocess.PIPE,
-    text=True,
-    bufsize=1,
-)
-
-
-def request(method, params=None, request_id=None):
-    payload = {"jsonrpc": "2.0", "method": method}
-    if params is not None:
-        payload["params"] = params
-    if request_id is not None:
-        payload["id"] = request_id
-    process.stdin.write(json.dumps(payload) + "\n")
-    process.stdin.flush()
-    if request_id is None:
-        return None
-    while True:
-        line = process.stdout.readline()
-        if not line:
-            stderr = process.stderr.read()
-            raise RuntimeError(f"No MCP response. stderr: {stderr}")
-        message = json.loads(line)
-        if message.get("id") != request_id:
-            continue
-        return message
-
-
-try:
-    try:
-        init_response = request(
-            "initialize",
-            {
-                "protocolVersion": "2024-11-05",
-                "capabilities": {},
-                "clientInfo": {"name": "kimi-codex-mcp", "version": "1.0"},
-            },
-            1,
-        )
-        if "result" not in init_response:
-            raise RuntimeError(f"Initialize failed: {init_response}")
-
-        request("notifications/initialized", {})
-
-        if thread_id:
-            tool_name = "codex-reply"
-            arguments = {"threadId": thread_id, "prompt": prompt}
-        else:
-            tool_name = "codex"
-            arguments = {
-                "prompt": prompt,
-                "cwd": cwd,
-                "sandbox": sandbox,
-                "approval-policy": approval_policy,
-            }
-            if model:
-                arguments["model"] = model
-            if profile:
-                arguments["profile"] = profile
-            if developer_instructions:
-                arguments["developer-instructions"] = developer_instructions
-            if provider:
-                arguments["config"] = {"model_provider": provider}
-
-        tool_response = request(
-            "tools/call",
-            {"name": tool_name, "arguments": arguments},
-            2,
-        )
-
-        if "result" not in tool_response:
-            raise RuntimeError(f"Tool call failed: {tool_response}")
-
-        result = tool_response["result"]
-        payload = {
-            "isError": bool(result.get("isError")),
-            "structuredContent": result.get("structuredContent") or {},
-            "content": result.get("content") or [],
-        }
-        print(json.dumps(payload, ensure_ascii=False))
-    except Exception as exc:
-        payload = {
-            "isError": True,
-            "structuredContent": {},
-            "content": [{"type": "text", "text": str(exc)}],
-        }
-        print(json.dumps(payload, ensure_ascii=False))
-        raise SystemExit(1)
-finally:
-    process.terminate()
-    try:
-        process.wait(timeout=2)
-    except Exception:
-        process.kill()
-PY
-}
+if [[ "$MODE" != "exec" && "$MODE" != "review" && "$MODE" != "resume" ]]; then
+    echo "Error: --mode must be exec, review, or resume" >&2
+    exit 1
+fi
 
 needs_fallback() {
     local text="$1"
@@ -247,22 +125,135 @@ needs_fallback() {
     [[ "$text" == *"error loading config"* ]]
 }
 
+run_once() {
+    local provider="$1"
+    local model="$2"
+    local output_file jsonl_file error_file combined_prompt
+    output_file="$(mktemp)"
+    jsonl_file="$(mktemp)"
+    error_file="$(mktemp)"
+
+    combined_prompt="$PROMPT"
+    if [[ "$MODE" == "review" ]]; then
+        combined_prompt="Review the current uncommitted changes in this repository. Return concise findings, risks, and a better next-step plan."
+        if [[ -n "$PROMPT" ]]; then
+            combined_prompt="$combined_prompt"$'\n\n'"Additional review instructions: $PROMPT"
+        fi
+    elif [[ -n "$DEVELOPER_INSTRUCTIONS" ]]; then
+        combined_prompt="$DEVELOPER_INSTRUCTIONS"$'\n\n'"$PROMPT"
+    fi
+
+    local -a cmd
+    case "$MODE" in
+        review)
+            cmd=(codex exec --json -o "$output_file" -s read-only)
+            ;;
+        exec)
+            cmd=(codex exec --skip-git-repo-check --json -o "$output_file" -s "$SANDBOX")
+            ;;
+        resume)
+            cmd=(codex exec resume --json -o "$output_file")
+            ;;
+    esac
+
+    if [[ -n "$provider" ]]; then
+        cmd+=(-c "model_provider=$provider")
+    fi
+    if [[ "$provider" == "zenmux" && -n "${ZENMUX_ONDEMAND_API_KEY:-}" ]]; then
+        cmd+=(
+            -c 'model_providers.zenmux.name="ZenMux On-Demand"'
+            -c 'model_providers.zenmux.base_url="https://zenmux.ai/api/v1"'
+            -c "model_providers.zenmux.experimental_bearer_token=\"$ZENMUX_ONDEMAND_API_KEY\""
+            -c 'model_providers.zenmux.wire_api="responses"'
+        )
+    fi
+    if [[ -n "$model" ]]; then
+        cmd+=(-m "$model")
+    fi
+    if [[ -n "$PROFILE" ]]; then
+        cmd+=(-p "$PROFILE")
+    fi
+
+    case "$MODE" in
+        review)
+            if [[ -n "$combined_prompt" ]]; then
+                cmd+=("$combined_prompt")
+            fi
+            ;;
+        exec)
+            cmd+=("$combined_prompt")
+            ;;
+        resume)
+            cmd+=("$THREAD_ID" "$combined_prompt")
+            ;;
+    esac
+
+    set +e
+    (
+        cd "$CWD"
+        "${cmd[@]}" >"$jsonl_file" 2>"$error_file"
+    )
+    local status=$?
+    set -e
+
+    python3 - "$status" "$MODE" "$jsonl_file" "$output_file" "$error_file" <<'PY'
+import json
+import pathlib
+import sys
+
+status = int(sys.argv[1])
+mode = sys.argv[2]
+jsonl_path = pathlib.Path(sys.argv[3])
+output_path = pathlib.Path(sys.argv[4])
+error_path = pathlib.Path(sys.argv[5])
+
+thread_id = ""
+if jsonl_path.exists():
+    for raw_line in jsonl_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        try:
+            payload = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if payload.get("type") == "thread.started":
+            thread_id = payload.get("thread_id", "")
+
+content = output_path.read_text(encoding="utf-8").strip() if output_path.exists() else ""
+stderr = error_path.read_text(encoding="utf-8").strip() if error_path.exists() else ""
+
+payload = {
+    "isError": status != 0,
+    "mode": mode,
+    "threadId": thread_id,
+    "content": content,
+    "error": stderr,
+}
+print(json.dumps(payload, ensure_ascii=False))
+PY
+
+    local rc=$status
+    rm -f "$output_file" "$jsonl_file" "$error_file"
+    return "$rc"
+}
+
 set +e
 first_json=$(run_once "$PROVIDER" "$MODEL")
 first_status=$?
 set -e
 
 if [[ $first_status -eq 0 ]]; then
-    python3 -c 'import json,sys; data=json.load(sys.stdin); print(json.dumps(data["structuredContent"], ensure_ascii=False, indent=2))' <<< "$first_json"
+    printf '%s\n' "$first_json"
     exit 0
 fi
 
-if [[ -n "$PROVIDER" || -n "$MODEL" || -n "$THREAD_ID" ]]; then
+if [[ -n "$PROVIDER" || -n "$MODEL" || "$MODE" == "resume" ]]; then
     printf '%s\n' "$first_json" >&2
     exit "$first_status"
 fi
 
-first_text=$(python3 -c 'import json,sys; data=json.load(sys.stdin); text=[]; text.append(json.dumps(data.get("structuredContent", {}), ensure_ascii=False)); text.extend(item.get("text", "") for item in data.get("content", []) if isinstance(item, dict)); print("\n".join(text))' <<< "$first_json")
+first_text=$(python3 -c 'import json,sys; data=json.load(sys.stdin); print("\n".join(x for x in [data.get("content",""), data.get("error","")] if x))' <<< "$first_json")
 if ! needs_fallback "$first_text"; then
     printf '%s\n' "$first_json" >&2
     exit "$first_status"
@@ -273,7 +264,6 @@ fallback_available=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["ha
 fallback_message=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["message"])' <<< "$fallback_json")
 fallback_provider=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["fallback_provider"])' <<< "$fallback_json")
 fallback_model=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["fallback_model"])' <<< "$fallback_json")
-fallback_server_cmd=$(python3 -c 'import json,sys; print(json.load(sys.stdin).get("fallback_server_cmd", ""))' <<< "$fallback_json")
 
 if [[ "$fallback_available" != "True" ]]; then
     printf '%s\n' "$first_json" >&2
@@ -284,8 +274,8 @@ fi
 
 echo "$fallback_message" >&2
 set +e
-second_json=$(run_once "$fallback_provider" "$fallback_model" "$fallback_server_cmd")
+second_json=$(run_once "$fallback_provider" "$fallback_model")
 second_status=$?
 set -e
-python3 -c 'import json,sys; data=json.load(sys.stdin); print(json.dumps(data["structuredContent"], ensure_ascii=False, indent=2))' <<< "$second_json"
+printf '%s\n' "$second_json"
 exit "$second_status"
