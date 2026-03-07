@@ -74,9 +74,25 @@ Both return a JSON object with:
 - `content`
 - `route`
 
+## Architecture
+
+```
+Kimi CLI → MCP Config → start-kimi-codex-mcp.sh → kimi_codex_mcp_server.py
+                                           ↓
+                                    call-codex.sh → codex mcp-server
+```
+
 ## References
 
-- `scripts/start-kimi-codex-mcp.sh` to launch the wrapper
-- `scripts/kimi_codex_mcp_server.py` for the Kimi-compatible server
-- `scripts/call-codex.sh` for the local MCP caller
-- `scripts/start-native-codex-mcp.sh` for launching the native Codex MCP server
+### 启动脚本
+- **`scripts/start-kimi-codex-mcp.sh`** - 主入口，启动 Kimi-compatible wrapper
+- **`scripts/start-native-codex-mcp.sh`** - 启动原生 Codex MCP server（含代理自动检测）
+
+### 实现文件
+- **`scripts/kimi_codex_mcp_server.py`** - FastMCP 实现的兼容层
+- **`scripts/call-codex.sh`** - 底层调用脚本，处理 fallback 逻辑
+- **`scripts/select-codex-target.sh`** - 目标选择和配置解析
+
+### 故障排查
+遇到超时、连接失败等问题时阅读：
+- **`docs/TROUBLESHOOTING.md`** - 详细排查指南（中文）
