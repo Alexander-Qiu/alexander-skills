@@ -1,6 +1,6 @@
 ---
 name: openspec
-description: Use when the user mentions OpenSpec, /opsx: commands, spec-driven development, or wants to use the OpenSpec framework for structured specification and change management. This skill provides guidance on using OpenSpec for documentation-first development with specs, changes, and artifacts.
+description: "Use when the user mentions OpenSpec, /opsx: commands, spec-driven development, or wants to use the OpenSpec framework for structured specification and change management. This skill provides guidance on using OpenSpec for documentation-first development with specs, changes, and artifacts."
 ---
 
 # OpenSpec 规范驱动开发
