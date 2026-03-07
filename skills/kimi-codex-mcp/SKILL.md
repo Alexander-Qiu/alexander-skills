@@ -5,8 +5,10 @@ description: Use when Kimi CLI needs to invoke Codex through MCP reliably, inclu
 
 # Kimi Codex MCP
 
-This is a dedicated skill for Kimi CLI.
-Use this skill for Kimi-specific Codex integration.
+KIMI-ONLY: This skill is designed only for Kimi, Kimi Code, and Kimi CLI.
+If the current agent is not Kimi-family, do not use this skill.
+
+Use this skill for Kimi-specific Codex integration only.
 
 ## When to use this instead of `codex-with-mcp`
 
@@ -19,7 +21,9 @@ Use this skill for Kimi-specific Codex integration.
 
 For Kimi, prefer the compatibility MCP wrapper in `scripts/start-kimi-codex-mcp.sh`.
 Do not point Kimi directly at native `codex mcp-server` unless you are debugging protocol compatibility.
-For review workflows, prefer the dedicated `codex_review` tool and keep each call stateless.
+When the user says `codex review`, `let codex check`, `让 codex 检查`, `inspect with codex`, or asks Codex for refactor advice, prefer a single `codex_review` call.
+Do not use multi-step Codex conversations unless the user explicitly asks to continue a previous Codex thread.
+Keep each review/check/refactor pass stateless by default.
 
 ## Why
 
@@ -81,6 +85,9 @@ This is the most reliable path for prompts like:
 
 - "让 codex review 一下这个工作"
 - "让 codex 检查完后，返回问题和改进方案"
+- "让 codex 看看这个实现有没有更好的重构方式"
+
+If the user only says `codex` in a Kimi session, default to interpreting it as a request for a single Codex review/check pass unless they clearly ask for a continued Codex conversation.
 
 ## Tools
 
