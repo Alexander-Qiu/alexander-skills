@@ -16,7 +16,7 @@ Personal Agent Skills library for Kimi Code CLI and other AI agents.
 | [canvas-design](./skills/canvas-design/) | Create beautiful visual art in PNG/PDF | ✅ Ready | 🟣 Universal |
 | [Claudeception](./skills/Claudeception/) | Multi-layered agent collaboration framework | ✅ Ready | 🔵 Claude |
 | [cli-agent-caller](./skills/cli-agent-caller/) | Multi-agent collaboration via CLI | ✅ Ready | 🟣 Universal |
-| [codex-with-mcp](./skills/codex-with-mcp/) | Use Codex CLI through native MCP (Claude Code) | ✅ Ready | 🔵 Claude |
+| [kimi-codex-mcp](./skills/kimi-codex-mcp/) | Use Codex from Kimi through MCP wrapper | ✅ Ready | 🟢 Kimi |
 | [deep-requirement-analysis](./skills/deep-requirement-analysis/) | Production-grade task planner with progressive disclosure | ✅ Ready | 🟢 Kimi |
 | [dispatching-parallel-agents](./skills/dispatching-parallel-agents/) | Dispatch 2+ independent tasks in parallel | ✅ Ready | 🟣 Universal |
 | [doc-coauthoring](./skills/doc-coauthoring/) | Structured workflow for co-authoring documentation | ✅ Ready | 🟣 Universal |
@@ -73,23 +73,22 @@ Install **only** these Kimi-specific skills (works for both "Kimi" and "Kimi Cod
 
 | Skill | Why | Do NOT Install |
 |-------|-----|----------------|
-| `kimi-codex-mcp` | Required - Call Codex from Kimi via MCP | `codex-with-mcp` (for Claude only) |
+| `kimi-codex-mcp` | Required - Call Codex from Kimi via MCP | - |
 | `kimi-mem` | Cross-session memory management | - |
 
-**⚠️ Warning:** Do NOT install `codex-with-mcp` in Kimi/Kimi Code CLI. It uses Claude Code's native MCP protocol and will not work properly in Kimi environments.
+**Note:** `kimi-codex-mcp` is the unified Codex integration skill for Kimi. It handles both normal Codex calls and fallback to on-demand routes.
 
 > 💡 **Note:** "Kimi" and "Kimi Code CLI" refer to the same AI assistant. Skills marked for 🟢 **Kimi** work with both names.
 
 ### For Claude Code Users
 
-Install **only** these Claude-specific skills:
+Claude Code has native Codex support via `codex` CLI. No additional skills required for Codex integration.
 
-| Skill | Why | Do NOT Install |
-|-------|-----|----------------|
-| `codex-with-mcp` | Required - Native Codex MCP integration | `kimi-codex-mcp` (for Kimi only) |
-| `Claudeception` | Multi-layered agent collaboration | - |
-
-**⚠️ Warning:** Do NOT install `kimi-codex-mcp` in Claude Code. It is a Kimi-specific compatibility layer and is redundant in Claude environments.
+For other Claude-specific features:
+| Skill | Purpose |
+|-------|---------|
+| `Claudeception` | Multi-layered agent collaboration |
+| `using-superpowers` | Skill discovery and usage |
 
 ## Plugins
 
