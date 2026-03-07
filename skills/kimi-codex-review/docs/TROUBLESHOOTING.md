@@ -1,15 +1,14 @@
-# Kimi Codex Review - 故障排查
+# Troubleshooting
 
-## 常见问题
+## Common Issues
 
-### 1. Codex CLI 未安装
+### 1. Codex CLI Not Found
 
-**症状：**
 ```
-Codex CLI not found
+[ERROR] Codex CLI not found
 ```
 
-**解决：**
+**Fix:**
 ```bash
 npm install -g @openai/codex
 codex login
@@ -17,101 +16,103 @@ codex login
 
 ---
 
-### 2. 网络连接超时
+### 2. Not in Git Repository
 
-**症状：**
 ```
-Codex review timed out after 120s
-failed to refresh available models: timeout
+[ERROR] Not in a git repository
 ```
 
-**诊断：**
+**Fix:**
 ```bash
-# 检查代理
-echo $HTTPS_PROXY
-
-# 测试连通性
-curl -x http://127.0.0.1:7890 https://api.openai.com/v1/models
+cd /your/git/repo
+./scripts/codex-review.sh
 ```
-
-**解决：**
-- 确保 clash 在运行，或手动设置代理：
-```bash
-export HTTPS_PROXY=http://127.0.0.1:7890
-```
-
-- 脚本会自动检测 clash 并设置代理
 
 ---
 
-### 3. 认证失败
+### 3. Network/Proxy Issues
 
-**症状：**
+**Symptoms:**
+- Timeouts
+- Connection errors
+- "Host is unreachable"
+
+**Fix:**
+
+Check if clash is running:
+```bash
+pgrep -x clash
+```
+
+If clash is running, the script auto-detects it. If not, manually set:
+```bash
+export HTTPS_PROXY=http://127.0.0.1:7890
+./scripts/codex-review.sh
+```
+
+---
+
+### 4. Authentication Failed
+
 ```
 401 Unauthorized
 Not authenticated
 ```
 
-**解决：**
+**Fix:**
 ```bash
 codex login
-# 或
+# or
 codex auth
 ```
 
 ---
 
-### 4. 配额超限
+### 5. All Providers Failed
 
-**症状：**
+If you see:
 ```
-quota exceeded
-subscription quota limit
+[ERROR] All providers failed
+Tried: default → zenmux → p2077
 ```
 
-**解决：**
-脚本会自动回退到 zenmux provider。确保设置了：
+**Check:**
+1. Network connection
+2. Proxy settings
+3. `codex login` status
+4. Provider quota (zenmux/p2077 may be exhausted)
+
+**Debug mode:**
 ```bash
-export ZENMUX_ONDEMAND_API_KEY="sk-ai-v1-..."
-```
-
-或强制使用 fallback：
-```bash
-./scripts/kimi-codex-review.sh --provider zenmux --model google/gemini-3-flash-preview --uncommitted
+./scripts/codex-review.sh --timeout 60 2>&1 | head -50
 ```
 
 ---
 
-### 5. 不在 git 仓库中
+## Provider Status
 
-**症状：**
-```
-Not in a git repository
-```
-
-**解决：**
-必须在 git 仓库中运行 review 命令：
-```bash
-cd /your/git/repo
-./scripts/kimi-codex-review.sh --uncommitted
-```
+| Provider | Model | Status |
+|----------|-------|--------|
+| default (OpenAI) | gpt-5.4 | Requires subscription |
+| zenmux | gemini-3-flash-preview | Pay-as-you-go |
+| p2077 | pa/gemini-3-flash-preview | Experimental |
 
 ---
 
-## 调试模式
+## Debug Tips
 
-启用详细日志：
+Test individual providers:
 ```bash
-KIMI_CODEX_DEBUG=1 ./scripts/kimi-codex-review.sh --uncommitted
+# Default
+codex exec review --uncommitted --skip-git-repo-check
+
+# Zenmux
+codex exec review --uncommitted --skip-git-repo-check \
+  -c "model_provider=zenmux" \
+  -m "google/gemini-3-flash-preview"
+
+# p2077
+codex exec review --uncommitted --skip-git-repo-check \
+  -c "model_provider=p2077" \
+  -m "pa/gemini-3-flash-preview"
 ```
-
----
-
-## 相关文件
-
-| 文件 | 用途 |
-|------|------|
-| `scripts/kimi-codex-review.sh` | 主脚本 |
-| `scripts/select-codex-target.sh` | Fallback 选择逻辑 |
-| `~/.codex/config.toml` | Codex 配置 |
-| `~/.codex/auth.json` | 认证信息 |

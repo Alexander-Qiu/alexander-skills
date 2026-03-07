@@ -1,141 +1,130 @@
 ---
 name: kimi-codex-review
-description: "Use when Kimi CLI needs to invoke Codex for code review. Use this whenever the user mentions 'codex review', '让 codex 检查', 'codex 重构', 'inspect with codex', or wants AI-assisted code review through Codex CLI. This skill uses direct CLI invocation (not MCP) for stability."
+description: "Use this skill whenever the user mentions codex, codex review, code review with codex, '让 codex 检查', 'codex 重构', or wants AI-assisted code review. This includes ANY mention of: codex, codex review, codex check, let codex inspect, codex help, or when the user wants AI to review code. Always use this skill for codex-related code review requests in Kimi CLI."
 ---
 
 # Kimi Codex Review
 
-> 🟢 **Kimi CLI / Kimi Code ONLY** — Direct Codex CLI integration.
->
-> 🔵 **Claude Code users**: Use `/skill:codex-with-mcp` instead.
+Direct Codex CLI integration for Kimi — no MCP, no timeouts, just works.
 
----
+## When to Use
 
-## 🎯 Overview
+Use this skill immediately when the user says:
+- "codex review"
+- "让 codex 检查一下"
+- "codex 看看这段代码"
+- "用 codex review"
+- "codex 重构建议"
+- Any mention of **codex** + **review/check/inspect**
 
-Direct `codex exec review` CLI invocation — no MCP, no timeout issues.
+## Core Rule
 
-**Verified Design:**
-- ✅ 3 consecutive default calls succeed
-- ✅ Fallback to `zenmux + gemini-3-flash-preview` succeeds
+**Always run `./scripts/codex-review.sh` for code review tasks.**
 
----
+Do not try to construct `codex exec` commands manually. The script handles provider selection, fallbacks, and proxy configuration automatically.
 
-## 🚀 Quick Start
+## Quick Start
 
-### Review Uncommitted Changes
 ```bash
-./scripts/kimi-codex-review.sh --uncommitted
+# Review current changes
+./scripts/codex-review.sh
+
+# Review with custom focus
+./scripts/codex-review.sh --prompt "Check for security issues"
+
+# Review against main branch
+./scripts/codex-review.sh --base main
 ```
 
-### Test 3x + Fallback
+## How It Works
+
+The script implements a **3-tier fallback strategy** (verified through testing):
+
+1. **Tier 1**: Default Codex configuration (OpenAI / your login)
+2. **Tier 2**: zenmux + gemini-3-flash-preview (if Tier 1 fails)
+3. **Tier 3**: p2077 + pa/gemini-3-flash-preview (if Tier 2 fails)
+
+**All without modifying `config.toml`.**
+
+## Requirements
+
+1. Codex CLI installed: `npm install -g @openai/codex`
+2. Logged in: `codex login`
+3. Clash running (for proxy) or direct internet access
+
+## Script Reference
+
+### `scripts/codex-review.sh`
+
+**Usage:**
 ```bash
-./scripts/kimi-codex-review.sh --test-3x
+./scripts/codex-review.sh [OPTIONS]
+
+Options:
+  --prompt TEXT     Custom review focus (security, performance, etc.)
+  --base BRANCH     Review changes against base branch
+  --commit HASH     Review specific commit
+  --timeout SECS    Override default 180s timeout
+  -h, --help        Show help
 ```
 
-### Force Provider/Model
+**Examples:**
 ```bash
-./scripts/kimi-codex-review.sh \
-  --provider zenmux \
-  --model google/gemini-3-flash-preview \
-  --uncommitted
+# Standard review
+./scripts/codex-review.sh
+
+# Security-focused review
+./scripts/codex-review.sh --prompt "Focus on security vulnerabilities"
+
+# Review vs main
+./scripts/codex-review.sh --base main
+
+# Longer timeout for large repos
+./scripts/codex-review.sh --timeout 300
 ```
 
----
+## Auto-Proxy Detection
 
-## 📋 Options
-
-| Option | Description |
-|--------|-------------|
-| `--uncommitted` | Review unstaged changes (default) |
-| `--base BRANCH` | Review against base branch |
-| `--commit HASH` | Review specific commit |
-| `--provider NAME` | Force provider (zenmux, openai) |
-| `--model NAME` | Force model |
-| `--timeout SECS` | Override 120s default |
-| `--test-3x` | Run 3x test + fallback test |
-
----
-
-## 🏗️ Architecture
-
-```
-Kimi CLI → kimi-codex-review.sh → codex exec review
-                              ↓
-                    Fallback on quota/auth error
-                              ↓
-                    zenmux + gemini-3-flash-preview
-```
-
-**No MCP. No server. Direct CLI.**
-
----
-
-## 🔧 Configuration
-
-### ~/.codex/config.toml
-
-```toml
-model_provider = "zenmux"
-model = "google/gemini-3-flash-preview"
-
-[model_providers.zenmux]
-name = "ZenMux On-Demand"
-base_url = "https://zenmux.ai/api/v1"
-experimental_bearer_token = "sk-ai-v1-..."
-wire_api = "responses"
-```
-
-### Auto Proxy Detection
-
-If clash is running, script auto-sets:
+If clash is running, the script automatically sets:
 ```bash
 HTTPS_PROXY=http://127.0.0.1:7890
 ```
 
----
+No manual configuration needed.
 
-## 📁 Files
+## Why CLI Instead of MCP?
 
-| File | Purpose |
-|------|---------|
-| `scripts/kimi-codex-review.sh` | Main entry point |
-| `docs/TROUBLESHOOTING.md` | Common issues |
+| Aspect | MCP Approach | CLI Approach (This Skill) |
+|--------|-------------|---------------------------|
+| Timeout | ❌ Kimi MCP timeout too short | ✅ No timeout issues |
+| Complexity | ❌ MCP server + wrapper | ✅ Direct `codex exec` |
+| Stability | ❌ Connection drops | ✅ Reliable |
+| Fallback | ❌ Hard to implement | ✅ Easy 3-tier fallback |
 
----
+## Troubleshooting
 
-## 🎨 Usage Examples
+See `docs/TROUBLESHOOTING.md` for common issues:
+- Codex CLI not installed
+- Network/proxy issues
+- Authentication failures
+- Provider quota exceeded
 
-### Standard Review
-```text
-User: "codex review 一下"
-→ ./scripts/kimi-codex-review.sh --uncommitted
+## Architecture
+
+```
+User Request
+    │
+    ▼
+./scripts/codex-review.sh
+    │
+    ├─► Tier 1: codex exec review (default)
+    │   └─► Success? Return results
+    │
+    ├─► Tier 2: codex exec review -c model_provider=zenmux
+    │   └─► Success? Return results
+    │
+    └─► Tier 3: codex exec review -c model_provider=p2077
+        └─► Return results (or error if all fail)
 ```
 
-### Security Review
-```text
-User: "让 codex 检查安全问题"
-→ ./scripts/kimi-codex-review.sh --uncommitted
-```
-
-### Verify 3x + Fallback
-```text
-User: "测试 codex 连接"
-→ ./scripts/kimi-codex-review.sh --test-3x
-```
-
----
-
-## ⚠️ Requirements
-
-1. **Codex CLI installed**: `npm install -g @openai/codex`
-2. **Logged in**: `codex login`
-3. **Git repository**: Must run inside a git repo
-4. **Network**: Proxy auto-detected if clash running
-
----
-
-## 🔗 Related
-
-- `codex exec review --help` — Native CLI help
-- `../codex-with-mcp/` — Claude Code MCP integration
+**No config file modifications. No MCP. Just CLI.**
