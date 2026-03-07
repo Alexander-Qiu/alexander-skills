@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "codex": {
-      "command": "/mnt/data/qrz-dev/mem/alexander-skills/skills/kimi-codex-mcp/scripts/start-kimi-codex-mcp.sh",
-      "args": [],
-      "env": {}
-    }
-  }
-}
