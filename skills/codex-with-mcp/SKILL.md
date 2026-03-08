@@ -1,13 +1,13 @@
 ---
 name: codex-with-mcp
-description: "🔵 CLAUDE ONLY - DO NOT USE IN KIMI. Use whenever the user mentions Codex, codex review, codex refactor, codex help, or wants to use Codex CLI for any coding task, code review, refactoring, debugging, or AI-assisted development. This includes ANY mention of: 'use codex', 'codex review', 'codex refactor', 'codex check', 'let codex', 'ask codex', 'run codex', 'codex mcp', 'codex tool', switching model_provider, switching models like google/gemini-3-flash-preview, or when the user wants AI coding assistance through Codex. Always use this skill for codex-related requests in Claude Code."
+description: "🔵 CLAUDE ONLY - DO NOT USE IN KIMI (Kimi users use kimi-codex-review instead). Use whenever the user mentions Codex, codex review, codex refactor, codex help, or wants to use Codex CLI for any coding task, code review, refactoring, debugging, or AI-assisted development. This includes ANY mention of: 'use codex', 'codex review', 'codex refactor', 'codex check', 'let codex', 'ask codex', 'run codex', 'codex mcp', 'codex tool', switching model_provider, switching models like google/gemini-3-flash-preview, or when the user wants AI coding assistance through Codex. Always use this skill for codex-related requests in Claude Code."
 ---
 
 # Codex with MCP
 
 > ⚠️ **PLATFORM RESTRICTION**: This skill is **Claude Code ONLY**.
 > 
-> **Kimi / Kimi CLI / Kimi Code users**: Do NOT use this skill. Use `/skill:kimi-codex-mcp` instead.
+> **Kimi / Kimi CLI / Kimi Code users**: Do NOT use this skill. Use `/skill:kimi-codex-review` instead.
 
 ---
 
@@ -15,11 +15,11 @@ description: "🔵 CLAUDE ONLY - DO NOT USE IN KIMI. Use whenever the user menti
 
 If you are using **Kimi CLI**, **Kimi Code**, or any Kimi-based agent:
 
-**STOP** — Use `/skill:kimi-codex-mcp` instead.
+**STOP** — Use `/skill:kimi-codex-review` instead.
 
 This skill (`codex-with-mcp`) is designed specifically for Claude Code's native MCP protocol support and will NOT work correctly in Kimi environments.
 
-See: `../kimi-codex-mcp/SKILL.md`
+See: `../kimi-codex-review/SKILL.md`
 
 ---
 
@@ -100,6 +100,6 @@ Use these field names exactly:
 | Skill | Platform | Protocol | Reason |
 |-------|----------|----------|--------|
 | `codex-with-mcp` | 🔵 Claude Code | Native MCP | Claude supports native Codex MCP schema |
-| `kimi-codex-mcp` | 🟢 Kimi CLI | Compatibility wrapper | Kimi needs a compatibility layer to handle protocol differences |
+| `kimi-codex-review` | 🟢 Kimi CLI | Direct CLI approach | More reliable than MCP - uses direct `codex exec` with 3-tier fallback |
 
 Kimi's MCP implementation reconnects after tool listing, which causes Codex's native MCP server to fail with "initialize called more than once". The `kimi-codex-mcp` skill provides a wrapper to handle this.
