@@ -7,3 +7,6 @@
 [submodule "third-party/orchestra-ai-research-skills"]
 	path = third-party/orchestra-ai-research-skills
 	url = https://github.com/orchestra-research/ai-research-skills.git
+[submodule "third-party/pua"]
+	path = third-party/pua
+	url = https://github.com/tanweai/pua.git

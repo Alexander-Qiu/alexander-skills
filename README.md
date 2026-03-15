@@ -89,6 +89,17 @@ For other Claude-specific features:
 | `Claudeception` | Multi-layered agent collaboration |
 | `using-superpowers` | Skill discovery and usage |
 
+## Third-Party Projects
+
+The following are third-party skill libraries included as git submodules:
+
+| Project | Description | Location |
+|---------|-------------|----------|
+| [pua](./third-party/pua/) | AI Coding Agent skill plugin using PUA rhetoric to force AI to exhaust every solution | `third-party/pua/` |
+| [orchestra-ai-research-skills](./third-party/orchestra-ai-research-skills/) | Orchestra AI research skills collection | `third-party/orchestra-ai-research-skills/` |
+| [anthropics-skills](./third-party/anthropics-skills/) | Official Anthropic skills and examples | `third-party/anthropics-skills/` |
+| [vllm-omni-skills](./third-party/vllm-omni-skills/) | vLLM-Omni multimodal model skills | `third-party/vllm-omni-skills/` |
+
 ## Plugins
 
 The following are Claude Code plugins (not standalone skills):
