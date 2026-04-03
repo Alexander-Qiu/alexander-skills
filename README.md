@@ -16,7 +16,6 @@ Personal Agent Skills library for Kimi Code CLI and other AI agents.
 | [canvas-design](./skills/canvas-design/) | Create beautiful visual art in PNG/PDF | ✅ Ready | 🟣 Universal |
 | [Claudeception](./skills/Claudeception/) | Multi-layered agent collaboration framework | ✅ Ready | 🔵 Claude |
 | [cli-agent-caller](./skills/cli-agent-caller/) | Multi-agent collaboration via CLI | ✅ Ready | 🟣 Universal |
-| [kimi-codex-review](./skills/kimi-codex-review/) | Use Codex from Kimi via CLI (code review, refactoring) | ✅ Ready | 🟢 Kimi |
 | [deep-requirement-analysis](./skills/deep-requirement-analysis/) | Production-grade task planner with progressive disclosure | ✅ Ready | 🟢 Kimi |
 | [dispatching-parallel-agents](./skills/dispatching-parallel-agents/) | Dispatch 2+ independent tasks in parallel | ✅ Ready | 🟣 Universal |
 | [doc-coauthoring](./skills/doc-coauthoring/) | Structured workflow for co-authoring documentation | ✅ Ready | 🟣 Universal |
@@ -72,16 +71,24 @@ Install **only** these Kimi-specific skills (works for both "Kimi" and "Kimi Cod
 
 | Skill | Why | Do NOT Install |
 |-------|-----|----------------|
-| `kimi-codex-review` | Required - Call Codex from Kimi via CLI | - |
 | `kimi-mem` | Cross-session memory management | - |
-
-**Note:** `kimi-codex-review` uses direct Codex CLI (`codex exec review`) with automatic provider fallback (default → zenmux → p2077). No MCP, no timeout issues.
 
 > 💡 **Note:** "Kimi" and "Kimi Code CLI" refer to the same AI assistant. Skills marked for 🟢 **Kimi** work with both names.
 
 ### For Claude Code Users
 
-Claude Code has native Codex support via `codex` CLI. No additional skills required for Codex integration.
+Codex integration is no longer maintained as a skill in this repository.
+
+For Claude Code, use the official OpenAI plugin maintained in [openai/codex-plugin-cc](https://github.com/openai/codex-plugin-cc):
+
+```bash
+/plugin marketplace add openai/codex-plugin-cc
+/plugin install codex@openai-codex
+/reload-plugins
+/codex:setup
+```
+
+This repository now keeps only non-Codex skills plus Claude plugins that are maintained locally here.
 
 For other Claude-specific features:
 | Skill | Purpose |
@@ -107,6 +114,8 @@ The following are Claude Code plugins (not standalone skills):
 | Plugin | Description | Location |
 |--------|-------------|----------|
 | [claude-mem](./claude-plugins/plugins/claude-mem/) | Cross-session memory for Claude Code | `claude-plugins/plugins/` |
+
+For Codex support in Claude Code, install the external plugin from [openai/codex-plugin-cc](https://github.com/openai/codex-plugin-cc) instead of using a local skill from this repository.
 
 ## 🧪 Skill Validation
 

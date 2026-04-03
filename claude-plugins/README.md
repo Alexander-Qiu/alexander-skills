@@ -1,6 +1,6 @@
 # Claude Plugins 集合
 
-Alexander Skills 的 Claude Code Plugins 集合，包含 15 个精选插件，提升你的 Claude Code 开发体验。
+Alexander Skills 的 Claude Code Plugins 集合，包含 14 个精选插件，提升你的 Claude Code 开发体验。
 
 ## 包含的 Plugins
 
@@ -22,12 +22,19 @@ Alexander Skills 的 Claude Code Plugins 集合，包含 15 个精选插件，�
 | **ralph-wiggum** | 自引用 AI 循环，迭代开发直到完成 |
 | **security-guidance** | 安全提醒 Hook，监控 9 种安全模式 |
 
-### Marketplace Plugins (2个)
+### Marketplace Plugins (1个)
 
 | Plugin | 版本 | 描述 | 位置 |
 |--------|------|------|------|
-| **skill-codex** | 1.1.0 | 委托提示给 OpenAI Codex CLI 进行代码分析 | `plugins/skill-codex/` |
 | **claude-mem** | 10.0.7 | 持久化内存系统，跨会话保留上下文 | `marketplace/claude-mem/` (完整项目) |
+
+### 外部维护 Plugins
+
+以下插件不再由本仓库 vendored / 维护，请直接使用上游仓库：
+
+| Plugin | 维护方 | 安装方式 |
+|--------|--------|----------|
+| **codex** | [openai/codex-plugin-cc](https://github.com/openai/codex-plugin-cc) | `/plugin marketplace add openai/codex-plugin-cc` 然后 `/plugin install codex@openai-codex` |
 
 ## 快速安装
 
@@ -164,12 +171,6 @@ PR 审查工具集：
 - Pickle 反序列化警告
 - OS.system 调用检测
 
-### skill-codex
-OpenAI Codex CLI 集成：
-- 委托提示给 Codex CLI
-- 支持代码分析和重构
-- 自动化代码编辑
-
 ### claude-mem
 持久化内存系统：
 - 跨会话保留上下文
@@ -187,7 +188,6 @@ OpenAI Codex CLI 集成：
 
 各 plugin 保留其原始许可证：
 - 官方 Plugins: 遵循各自 LICENSE 文件
-- skill-codex: MIT
 - claude-mem: AGPL-3.0
 
 ## 贡献
@@ -198,4 +198,5 @@ OpenAI Codex CLI 集成：
 
 - [Claude Code 文档](https://docs.anthropic.com/en/docs/claude-code)
 - [Claude Code Plugins](https://github.com/anthropics/claude-plugins)
+- [Codex plugin for Claude Code](https://github.com/openai/codex-plugin-cc)
 - [alexander-skills](https://github.com/yourname/alexander-skills)

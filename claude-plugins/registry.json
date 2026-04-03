@@ -15,7 +15,6 @@
     {"name": "pr-review-toolkit", "version": "0.1.0", "source": "official", "description": "Comprehensive PR review agents"},
     {"name": "ralph-wiggum", "version": "0.1.0", "source": "official", "description": "Interactive self-referential AI loops for iterative development"},
     {"name": "security-guidance", "version": "0.1.0", "source": "official", "description": "Security reminder hook for potential issues"},
-    {"name": "skill-codex", "version": "1.1.0", "source": "marketplace", "description": "Delegate prompts to OpenAI Codex CLI"},
     {"name": "claude-mem", "version": "10.0.7", "source": "marketplace", "description": "Persistent memory system for Claude Code"}
   ]
 }
