@@ -77,6 +77,8 @@ Install **only** these Kimi-specific skills (works for both "Kimi" and "Kimi Cod
 
 ### For Claude Code Users
 
+#### Codex Integration
+
 Codex integration is no longer maintained as a skill in this repository.
 
 For Claude Code, use the official OpenAI plugin maintained in [openai/codex-plugin-cc](https://github.com/openai/codex-plugin-cc):
@@ -88,9 +90,30 @@ For Claude Code, use the official OpenAI plugin maintained in [openai/codex-plug
 /codex:setup
 ```
 
-This repository now keeps only non-Codex skills plus Claude plugins that are maintained locally here.
+#### PUA Plugin
 
-For other Claude-specific features:
+For PUA (我们不养闲 Agent), you have two installation options:
+
+**Option 1: Via Official Marketplace (Recommended for users)**
+```bash
+/plugin marketplace add tanweai/pua
+/plugin install pua@pua-skills
+/reload-plugins
+```
+
+**Option 2: Via Symlink (For developers)**
+```bash
+# Link from this repository's third-party directory
+ln -s /path/to/alexander-skills/third-party/pua ~/.claude/plugins/pua
+/reload-plugins
+```
+
+> 💡 **Which to choose?**
+> - **Marketplace**: Better for regular users, version-controlled, easier to update
+> - **Symlink**: Better for developers who need to modify PUA source code
+
+#### Other Claude-Specific Features
+
 | Skill | Purpose |
 |-------|---------|
 | `Claudeception` | Multi-layered agent collaboration |
@@ -100,12 +123,14 @@ For other Claude-specific features:
 
 The following are third-party skill libraries included as git submodules:
 
-| Project | Description | Location |
-|---------|-------------|----------|
-| [pua](./third-party/pua/) | AI Coding Agent skill plugin using PUA rhetoric to force AI to exhaust every solution | `third-party/pua/` |
-| [orchestra-ai-research-skills](./third-party/orchestra-ai-research-skills/) | Orchestra AI research skills collection | `third-party/orchestra-ai-research-skills/` |
-| [anthropics-skills](./third-party/anthropics-skills/) | Official Anthropic skills and examples | `third-party/anthropics-skills/` |
-| [vllm-omni-skills](./third-party/vllm-omni-skills/) | vLLM-Omni multimodal model skills | `third-party/vllm-omni-skills/` |
+| Project | Description | Location | Installation |
+|---------|-------------|----------|--------------|
+| [pua](./third-party/pua/) | AI Coding Agent skill plugin using PUA rhetoric to force AI to exhaust every solution | `third-party/pua/` | See [Claude Code installation](#pua-plugin) |
+| [orchestra-ai-research-skills](./third-party/orchestra-ai-research-skills/) | Orchestra AI research skills collection | `third-party/orchestra-ai-research-skills/` | Auto-loaded |
+| [anthropics-skills](./third-party/anthropics-skills/) | Official Anthropic skills and examples | `third-party/anthropics-skills/` | Auto-loaded |
+| [vllm-omni-skills](./third-party/vllm-omni-skills/) | vLLM-Omni multimodal model skills | `third-party/vllm-omni-skills/` | Auto-loaded |
+
+> 💡 **Note:** Most third-party projects are auto-loaded as skills. PUA requires explicit plugin installation for Claude Code users (see installation options above).
 
 ## Plugins
 
