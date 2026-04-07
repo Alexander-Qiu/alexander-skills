@@ -1,74 +1,93 @@
 #!/bin/bash
-# Claude Plugins 安装脚本
-# 支持全局安装 (~/.claude/plugins/) 或项目安装 (./.claude/plugins/)
+# Alexander Skills — Claude Plugins 一键安装脚本
+# 用法: ./install.sh
+# 通过 claude plugin CLI 安装全部 22 个 plugins
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PLUGINS_DIR="$SCRIPT_DIR/plugins"
-
-# 检查 plugins 目录是否存在
-if [ ! -d "$PLUGINS_DIR" ]; then
-    echo "错误: 找不到 plugins 目录: $PLUGINS_DIR"
-    exit 1
-fi
-
-# 选择安装模式
 echo "========================================"
-echo "  Claude Plugins 安装脚本"
+echo "  Alexander Skills — Claude Plugins"
+echo "  一键安装 22 个 plugins"
 echo "========================================"
 echo ""
-echo "选择安装模式:"
-echo "1) 全局安装 (~/.claude/plugins/)"
-echo "2) 项目安装 (当前目录 .claude/plugins/)"
-echo ""
-read -p "请输入选项 (1/2): " choice
 
-if [ "$choice" = "1" ]; then
-    TARGET_DIR="$HOME/.claude/plugins/alexander-skills"
-    echo ""
-    echo "将安装到: $TARGET_DIR"
-elif [ "$choice" = "2" ]; then
-    TARGET_DIR="./.claude/plugins/alexander-skills"
-    echo ""
-    echo "将安装到: $TARGET_DIR (当前目录)"
-else
-    echo ""
-    echo "无效选项，退出。"
-    exit 1
-fi
+# ── 1. 添加 Marketplaces ──────────────────────────────────────────────────────
+echo "▶ Step 1: 注册 marketplaces..."
 
-# 创建目标目录
-mkdir -p "$TARGET_DIR"
+claude plugin marketplace add anthropics/claude-plugins-official --name claude-plugins-official 2>/dev/null \
+  && echo "  ✓ claude-plugins-official" \
+  || echo "  · claude-plugins-official (已存在，跳过)"
 
-# 统计 plugin 数量
-PLUGIN_COUNT=$(ls -1 "$PLUGINS_DIR" | wc -l)
+claude plugin marketplace add tanweai/pua --name pua-skills 2>/dev/null \
+  && echo "  ✓ pua-skills" \
+  || echo "  · pua-skills (已存在，跳过)"
+
+claude plugin marketplace add openai/codex-plugin-cc --name openai-codex 2>/dev/null \
+  && echo "  ✓ openai-codex" \
+  || echo "  · openai-codex (已存在，跳过)"
+
+claude plugin marketplace add thedotmack/claude-mem --name thedotmack 2>/dev/null \
+  && echo "  ✓ thedotmack" \
+  || echo "  · thedotmack (已存在，跳过)"
 
 echo ""
-echo "发现 $PLUGIN_COUNT 个 plugins，开始安装..."
-echo ""
 
-# 复制所有 plugins
-INSTALLED=0
-for plugin in "$PLUGINS_DIR"/*; do
-    if [ -d "$plugin" ]; then
-        name=$(basename "$plugin")
-        echo "  [✓] 安装 $name"
-        cp -r "$plugin" "$TARGET_DIR/"
-        INSTALLED=$((INSTALLED + 1))
-    fi
+# ── 2. 安装 claude-plugins-official ──────────────────────────────────────────
+echo "▶ Step 2: 安装 claude-plugins-official 插件..."
+
+OFFICIAL_PLUGINS=(
+  agent-sdk-dev
+  claude-code-setup
+  claude-md-management
+  code-review
+  code-simplifier
+  commit-commands
+  feature-dev
+  frontend-design
+  github
+  learning-output-style
+  notion
+  plugin-dev
+  pr-review-toolkit
+  ralph-loop
+  remember
+  rust-analyzer-lsp
+  skill-creator
+  superpowers
+  telegram
+)
+
+for plugin in "${OFFICIAL_PLUGINS[@]}"; do
+  claude plugin install "${plugin}@claude-plugins-official" 2>/dev/null \
+    && echo "  ✓ $plugin" \
+    || echo "  · $plugin (已安装或失败，跳过)"
 done
 
 echo ""
+
+# ── 3. 安装 marketplace 插件 ──────────────────────────────────────────────────
+echo "▶ Step 3: 安装第三方 marketplace 插件..."
+
+claude plugin install "pua@pua-skills" 2>/dev/null \
+  && echo "  ✓ pua" \
+  || echo "  · pua (已安装或失败，跳过)"
+
+claude plugin install "codex@openai-codex" 2>/dev/null \
+  && echo "  ✓ codex" \
+  || echo "  · codex (已安装或失败，跳过)"
+
+claude plugin install "claude-mem@thedotmack" 2>/dev/null \
+  && echo "  ✓ claude-mem" \
+  || echo "  · claude-mem (已安装或失败，跳过)"
+
+echo ""
+
+# ── 4. 验证 ───────────────────────────────────────────────────────────────────
+echo "▶ Step 4: 验证安装..."
+INSTALLED=$(claude plugin list 2>/dev/null | grep -c "✔\|enabled" || true)
+echo "  已安装并启用的插件数量: $INSTALLED"
+
+echo ""
 echo "========================================"
-echo "  安装完成!"
+echo "  安装完成！重启 Claude Code 生效。"
 echo "========================================"
-echo ""
-echo "已安装 $INSTALLED 个 plugins 到:"
-echo "  $TARGET_DIR"
-echo ""
-echo "使用方法:"
-echo "  - 查看已安装 plugins: ls $TARGET_DIR"
-echo "  - Claude Code 会自动加载这些 plugins"
-echo "  - 使用 /plugin 命令查看 plugin 列表"
-echo ""

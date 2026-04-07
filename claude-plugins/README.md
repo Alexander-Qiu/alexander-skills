@@ -1,6 +1,20 @@
 # Claude Plugins 集合
 
-Alexander Skills 的 Claude Code Plugins 集合，包含 14 个精选插件，提升你的 Claude Code 开发体验。
+Alexander Skills 的 Claude Code Plugins 集合，包含 **22 个精选插件**，提升你的 Claude Code 开发体验。
+
+## 一键安装
+
+```bash
+cd /mnt/data/qrz-dev/mem/alexander-skills/claude-plugins
+./install.sh
+```
+
+脚本会自动：
+1. 注册 4 个 marketplaces（claude-plugins-official, pua-skills, openai-codex, thedotmack）
+2. 通过 `claude plugin install` 安装全部 22 个插件
+3. 验证安装结果
+
+安装完成后**重启 Claude Code** 生效。
 
 ## 包含的 Plugins
 
