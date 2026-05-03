@@ -20,7 +20,6 @@ Personal Agent Skills library for Codex, Claude Code, Kimi Code CLI, and other A
 | [dispatching-parallel-agents](./skills/dispatching-parallel-agents/) | Dispatch 2+ independent tasks in parallel | ✅ Ready | 🟣 Universal |
 | [doc-coauthoring](./skills/doc-coauthoring/) | Structured workflow for co-authoring documentation | ✅ Ready | 🟣 Universal |
 | [docx](./skills/docx/) | Create and manipulate Word documents | ✅ Ready | 🟣 Universal |
-| [evomap](./skills/evomap/) | Connect to the EvoMap collaborative evolution marketplace | ✅ Ready | 🟣 Universal |
 | [executing-plans](./skills/executing-plans/) | Execute written implementation plans | ✅ Ready | 🟣 Universal |
 | [find-skills](./skills/find-skills/) | Discover and install agent skills | ✅ Ready | 🟣 Universal |
 | [finishing-a-development-branch](./skills/finishing-a-development-branch/) | Complete development work with structured options | ✅ Ready | 🟣 Universal |
