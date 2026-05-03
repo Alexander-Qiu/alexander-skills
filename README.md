@@ -1,6 +1,6 @@
 # Alexander's Skills
 
-Personal Agent Skills library for Kimi Code CLI and other AI agents.
+Personal Agent Skills library for Codex, Claude Code, Kimi Code CLI, and other AI agents.
 
 > ⚠️ **Development Note**: This project uses strict git workflow. See [CONTRIBUTING.md](./CONTRIBUTING.md) and `/skill:git-workflow` before making changes.
 
@@ -57,13 +57,47 @@ Personal Agent Skills library for Kimi Code CLI and other AI agents.
 | [xlsx](./skills/xlsx/) | Create and manipulate Excel spreadsheets | ✅ Ready | 🟣 Universal |
 
 **Platform Legend:**
-- 🟣 **Universal** - Works with both Kimi and Claude (documentation-based skills)
+- 🟣 **Universal** - Documentation-based skills that can be installed into Codex and Claude Code
 - 🟢 **Kimi** - Kimi-specific (requires MCP or Kimi-specific features)
-- 🔵 **Claude** - Claude-specific (requires Claude-specific features)
+- 🔵 **Claude** - Claude Code-specific (requires Claude plugin, hook, or command features)
 
 > 💡 **Note:** Most documentation-based skills are marked as Universal since the core concepts work across agents. Platform-specific skills typically involve MCP integration or agent-specific tool usage.
 
 ## Agent-Specific Installation Guide
+
+### For Codex Users
+
+Install the default Codex profile:
+
+```bash
+./install.sh --agent codex
+```
+
+The installer links compatible skills into `~/.codex/skills` and prompt
+entrypoints such as PUA into `~/.codex/prompts`.
+
+Preview first:
+
+```bash
+./install.sh --agent codex --dry-run
+```
+
+### For Claude Code Users
+
+Install shared skills plus Claude Code plugins:
+
+```bash
+./install.sh --agent claude-code
+```
+
+For a skills-only install that skips `claude plugin` commands:
+
+```bash
+./install.sh --agent claude-code --skip-plugins
+```
+
+See [INSTALL.md](./INSTALL.md), [targets/codex](./targets/codex/), and
+[targets/claude-code](./targets/claude-code/) for the exact target layout.
 
 ### For Kimi / Kimi Code CLI Users
 
@@ -75,11 +109,12 @@ Install **only** these Kimi-specific skills (works for both "Kimi" and "Kimi Cod
 
 > 💡 **Note:** "Kimi" and "Kimi Code CLI" refer to the same AI assistant. Skills marked for 🟢 **Kimi** work with both names.
 
-### For Claude Code Users
+### Claude Code Plugin Notes
 
-#### Codex Integration
+#### Codex Integration Inside Claude Code
 
-Codex integration is no longer maintained as a skill in this repository.
+The Claude Code bridge to Codex is a Claude plugin, separate from Codex native
+skills installed by `./install.sh --agent codex`.
 
 For Claude Code, use the official OpenAI plugin maintained in [openai/codex-plugin-cc](https://github.com/openai/codex-plugin-cc):
 
@@ -140,7 +175,7 @@ The following are Claude Code plugins (not standalone skills):
 |--------|-------------|----------|
 | [claude-mem](./claude-plugins/plugins/claude-mem/) | Cross-session memory for Claude Code | `claude-plugins/plugins/` |
 
-For Codex support in Claude Code, install the external plugin from [openai/codex-plugin-cc](https://github.com/openai/codex-plugin-cc) instead of using a local skill from this repository.
+For Codex support inside Claude Code, install the external plugin from [openai/codex-plugin-cc](https://github.com/openai/codex-plugin-cc). For Codex native skills, use `./install.sh --agent codex`.
 
 ## 🧪 Skill Validation
 
@@ -178,7 +213,17 @@ git clone git@github.com:Alexander-Qiu/alexander-skills.git
 cd alexander-skills
 ```
 
-### 2. Use the skills
+### 2. Install for your agent
+
+```bash
+# Codex
+./install.sh --agent codex
+
+# Claude Code
+./install.sh --agent claude-code
+```
+
+### 3. Use the skills
 
 After cloning, simply tell your AI agent to load the skills you need. For example:
 
@@ -192,7 +237,7 @@ Most agents will automatically discover and load skills from the `skills/` direc
 
 Some skills (like `kimi-mem`) require additional setup - the skill's documentation will guide you through it.
 
-### 3. Install Claude Code plugins (optional)
+### 4. Install Claude Code plugins directly (optional)
 
 For Claude Code users, install plugins separately:
 
@@ -213,7 +258,14 @@ Or see [claude-plugins/README.md](./claude-plugins/README.md) for manual install
 ```
 alexander-skills/
 ├── README.md
+├── INSTALL.md             # Agent install quickstart
+├── install.sh             # Wrapper around scripts/init-agent.py
 ├── CONTRIBUTING.md       # ⭐ Development workflow
+├── manifests/
+│   └── skills.json        # Codex / Claude Code profiles
+├── targets/
+│   ├── codex/
+│   └── claude-code/
 ├── skills/               # Standalone skills
 │   ├── kimi-mem/         # Memory management skill
 │   ├── git-workflow/     # Git workflow skill

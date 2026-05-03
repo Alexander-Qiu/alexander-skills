@@ -8,6 +8,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 INIT_AGENT = REPO_ROOT / "scripts" / "init-agent.py"
+ROOT_INSTALL = REPO_ROOT / "install.sh"
 
 
 class InitAgentTests(unittest.TestCase):
@@ -94,6 +95,22 @@ class InitAgentTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("Refusing to replace existing non-symlink", result.stderr)
             self.assertEqual((existing / "SKILL.md").read_text(encoding="utf-8"), "user content")
+
+    def test_root_install_wrapper_delegates_to_installer(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            home = Path(tmp)
+
+            result = subprocess.run(
+                [str(ROOT_INSTALL), "--agent", "codex", "--repo", str(REPO_ROOT), "--home", str(home)],
+                cwd=REPO_ROOT,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+            )
+
+            self.assertIn("Installed codex profile default", result.stdout)
+            self.assertTrue((home / ".codex" / "skills" / "pdf").is_symlink())
 
 
 if __name__ == "__main__":

@@ -4,6 +4,15 @@ Alexander Skills 的 Claude Code Plugins 集合，包含 **22 个精选插件**�
 
 ## 一键安装
 
+如果你想安装 Alexander shared skills 和 Claude Code plugins，优先使用仓库根目录的统一安装器：
+
+```bash
+cd /mnt/data/qrz-dev/mem/alexander-skills
+./install.sh --agent claude-code
+```
+
+本目录下的 `install.sh` 只负责 Claude Code plugins。
+
 ```bash
 cd /mnt/data/qrz-dev/mem/alexander-skills/claude-plugins
 ./install.sh

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Multi-agent testing harness for skills.
-Tests skills in both Kimi and Claude headless modes.
+Tests skills in legacy Kimi and Claude headless modes.
 """
 
 import subprocess
@@ -166,7 +166,7 @@ class MultiAgentTester:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Test skills across multiple agents (Kimi + Claude)'
+        description='Test skills across legacy headless agents (Kimi + Claude)'
     )
     parser.add_argument('skill_path', help='Path to skill directory')
     parser.add_argument('--agents', '-a', nargs='+', 
