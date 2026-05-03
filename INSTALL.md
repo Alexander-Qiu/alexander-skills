@@ -4,6 +4,12 @@ This repository can install the same skill source tree into Codex or Claude Code
 The installer uses symlinks, so updates in this folder are picked up by the
 agent-specific skill directory without copying files.
 
+If this is a fresh clone, initialize bundled third-party skill sources first:
+
+```bash
+git submodule update --init --recursive
+```
+
 ## Codex
 
 ```bash

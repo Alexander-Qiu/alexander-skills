@@ -211,6 +211,7 @@ See `/skill:skill-validation` for complete validation framework.
 ```bash
 git clone git@github.com:Alexander-Qiu/alexander-skills.git
 cd alexander-skills
+git submodule update --init --recursive
 ```
 
 ### 2. Install for your agent
