@@ -1,6 +1,6 @@
 ---
 name: skill-validation
-description: Use this skill when creating new skills, updating existing skills, or preparing skills for release. MUST validate all skills through this framework before release. Enforces multi-agent testing (Kimi + Claude required), automated testing, and verification checklists.
+description: Use this skill when creating new skills, updating existing skills, or preparing skills for release. MUST validate all skills through this framework before release. Enforces multi-agent testing, automated testing, and verification checklists.
 license: MIT
 ---
 
@@ -16,8 +16,9 @@ Comprehensive validation workflow to ensure all skills are **highly available** 
 
 ```
 NO SKILL RELEASE WITHOUT:
-- ✅ Kimi Code CLI validation
-- ✅ Claude Code validation  
+- ✅ Codex validation when the skill is in a Codex profile
+- ✅ Claude Code validation when the skill is in a Claude Code profile
+- ✅ Kimi Code CLI validation when the skill is in a Kimi profile
 - ✅ Unit tests passing
 - ✅ Integration tests passing
 - ✅ Cross-agent compatibility confirmed
@@ -31,7 +32,7 @@ NO SKILL RELEASE WITHOUT:
 |-------|------|--------------|------------|
 | 1 | Structure | All skills | YAML frontmatter, file structure |
 | 2 | Unit Tests | Skills with scripts | Test coverage ≥80% |
-| 3 | Multi-Agent | All skills | Kimi + Claude integration |
+| 3 | Multi-Agent | All skills | Codex + Claude Code integration for shared profiles |
 | 4 | E2E Scenarios | Complex skills | Real-world workflows |
 | 5 | Compatibility | Multi-agent skills | Compatibility matrix |
 
@@ -57,7 +58,7 @@ See [references/validation-levels.md](references/validation-levels.md) for detai
 **Checklist:**
 - [ ] Level 1 (Structure) ✅
 - [ ] Level 2 (Unit Tests) ✅ (if applicable)
-- [ ] Kimi loads without errors ✅
+- [ ] Target agents load without errors ✅
 - [ ] No TODO/FIXME in code ✅
 
 ### Phase 3: Pre-Release Validation
@@ -66,19 +67,19 @@ See [references/validation-levels.md](references/validation-levels.md) for detai
 ```bash
 # Full validation:
 1. All previous levels
-2. Full Kimi integration test
-3. Full Claude integration test
+2. Full Codex integration test if listed in the Codex profile
+3. Full Claude Code integration test if listed in the Claude Code profile
 4. E2E scenario tests
 5. Compatibility matrix
 ```
 
 **Commands:**
 ```bash
-# Test with Kimi
-python skills/skill-validation/scripts/test_with_kimi.py skills/my-skill/
+# Test installer wiring with Codex
+./install.sh --agent codex --dry-run
 
-# Test with Claude  
-python skills/skill-validation/scripts/test_with_claude.py skills/my-skill/
+# Test installer wiring with Claude Code
+./install.sh --agent claude-code --dry-run
 
 # Multi-agent test
 python skills/skill-validation/scripts/test_multi_agent.py skills/my-skill/
@@ -118,13 +119,13 @@ claude -p "Use <skill-name> to <do something>"
 ### MUST HAVE Before Release:
 1. ✅ Structure validation passing
 2. ✅ Unit tests passing (if applicable)
-3. ✅ Kimi integration test passed
-4. ✅ Claude integration test passed
+3. ✅ Codex integration test passed when applicable
+4. ✅ Claude Code integration test passed when applicable
 5. ✅ Compatibility matrix documented
 6. ✅ All TODOs resolved
 
 ### BLOCKING Issues (cannot release):
-- ❌ Skill fails to load in Kimi or Claude
+- ❌ Skill fails to load in a declared target agent
 - ❌ Core functionality broken
 - ❌ Tests failing
 - ❌ Security issues in scripts
@@ -138,11 +139,11 @@ claude -p "Use <skill-name> to <do something>"
 **Before PR:**
 - [ ] Level 1: Structure validation ✅
 - [ ] Level 2: Unit tests passing ✅
-- [ ] Kimi loads without errors ✅
+- [ ] Declared target agents load without errors ✅
 
 **Before Release:**
-- [ ] Level 3: Kimi full integration test ✅
-- [ ] Level 3: Claude full integration test ✅
+- [ ] Level 3: Codex full integration test when applicable ✅
+- [ ] Level 3: Claude Code full integration test when applicable ✅
 - [ ] Level 4: E2E tests ✅
 - [ ] Level 5: Compatibility matrix ✅
 
@@ -151,11 +152,11 @@ claude -p "Use <skill-name> to <do something>"
 **PR Review:**
 - [ ] Structure validation passing
 - [ ] Tests present and passing
-- [ ] Kimi test evidence provided
+- [ ] Target-agent test evidence provided
 
 **Release Review:**
 - [ ] All validation levels passing
-- [ ] Both Kimi and Claude tested
+- [ ] All declared target agents tested
 - [ ] No blocking issues
 
 ---

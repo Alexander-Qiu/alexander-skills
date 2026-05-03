@@ -46,8 +46,9 @@ skill-name/
 
 | Agent | Priority | Test Focus |
 |-------|----------|------------|
-| **Kimi Code CLI** | Required | Trigger detection, skill loading, tool execution |
-| **Claude Code** | Required | Trigger detection, skill loading, workflow execution |
+| **Codex** | Required when listed in Codex profile | Installer wiring, skill loading, prompt links |
+| **Claude Code** | Required when listed in Claude Code profile | Installer wiring, plugin commands, workflow execution |
+| **Kimi Code CLI** | Required when listed in Kimi profile | Trigger detection, skill loading, tool execution |
 
 See [testing-protocols.md](testing-protocols.md) for detailed testing procedures.
 
@@ -66,9 +67,10 @@ Test real-world usage scenarios:
 ```markdown
 ## Compatibility Matrix
 
-| Feature | Kimi | Claude | Notes |
-|---------|------|--------|-------|
-| Trigger detection | ✅ | ✅ | Works on both |
-| Script execution | ✅ | ✅ | Python 3.8+ required |
-| MCP tools | ✅ | ❌ | Claude doesn't support MCP yet |
+| Feature | Codex | Claude Code | Kimi | Notes |
+|---------|-------|-------------|------|-------|
+| Installer wiring | ✅ | ✅ | N/A | `install.sh --dry-run` |
+| Skill loading | ✅ | ✅ | ✅ | Agent-specific smoke test |
+| Script execution | ✅ | ✅ | ✅ | Python 3.8+ required |
+| MCP tools | Check target | Check plugin support | Check target | Do not assume parity |
 ```
