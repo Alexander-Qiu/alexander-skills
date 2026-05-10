@@ -1,6 +1,6 @@
 # Owner Privileges
 
-**Alexander Qiu** (仓库所有者) 有以下特权：
+**Alexander Qiu** (`ruizhi_qiu@foxmail.com`, 仓库所有者) 有以下特权：
 
 | 特权 | 说明 |
 |------|------|

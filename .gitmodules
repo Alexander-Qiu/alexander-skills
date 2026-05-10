@@ -10,3 +10,6 @@
 [submodule "third-party/pua"]
 	path = third-party/pua
 	url = https://github.com/tanweai/pua.git
+[submodule "third-party/frontend-slides"]
+	path = third-party/frontend-slides
+	url = https://github.com/zarazhangrui/frontend-slides.git

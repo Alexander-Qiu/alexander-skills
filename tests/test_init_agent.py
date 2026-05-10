@@ -39,6 +39,19 @@ class InitAgentTests(unittest.TestCase):
                 (REPO_ROOT / "skills" / "pdf").resolve(),
             )
             self.assertTrue((codex_home / "skills" / "docx").is_symlink())
+            self.assertTrue((codex_home / "skills" / "frontend-slides").is_symlink())
+            self.assertEqual(
+                (codex_home / "skills" / "frontend-slides").resolve(),
+                (
+                    REPO_ROOT
+                    / "third-party"
+                    / "frontend-slides"
+                    / "plugins"
+                    / "frontend-slides"
+                    / "skills"
+                    / "frontend-slides"
+                ).resolve(),
+            )
             self.assertTrue((codex_home / "skills" / "pua").is_symlink())
             self.assertEqual(
                 (codex_home / "skills" / "pua").resolve(),
@@ -61,6 +74,7 @@ class InitAgentTests(unittest.TestCase):
             self.assertIn("Installed claude-code profile default", result.stdout)
             self.assertTrue((claude_home / "skills" / "pdf").is_symlink())
             self.assertTrue((claude_home / "skills" / "docx").is_symlink())
+            self.assertTrue((claude_home / "skills" / "frontend-slides").is_symlink())
             self.assertTrue((claude_home / "skills" / "Claudeception").is_symlink())
             self.assertFalse((claude_home / "plugins").exists())
 

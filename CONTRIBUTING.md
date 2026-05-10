@@ -198,15 +198,15 @@ Additional information.
 
 ### Direct Push to Main (验证过的用户)
 
-以下用户可以直接 push 到 `main` 分支，**但必须遵循以下规则**：
+以下用户可以直接 push 到 `main` 分支，**默认推送目标也是 `main`**，但必须遵循以下规则：
 
-- **Alexander Qiu** (仓库所有者)
+- **Alexander Qiu** (`ruizhi_qiu@foxmail.com`, 仓库所有者)
 
 **⚠️ 直接 Push 规则：**
 1. 变更必须已经过**充分验证**（测试通过、功能正常）
-2. 仅限文档更新、README 修改、小的配置调整
-3. 代码变更、新功能添加必须使用 PR 流程
-4. 如果变更可能影响他人，即使小改动也建议使用 PR
+2. Alexander Qiu 的默认流程是本地验证后直接推送到 `main`
+3. 外部贡献者、非 owner agent、或需要 review 的高风险变更使用 PR 流程
+4. 如果变更可能影响他人，即使 owner 直推也必须先完成本地验证并保持提交范围单一
 
 **🔀 Alexander Qiu 本地合并特权：**
 
@@ -271,7 +271,7 @@ git branch -d docs/update-c
 - [ ] **兼容性检查** - 不破坏现有 skills 的兼容性
 - [ ] **Self-Review** - 作者已自行 review 代码
 
-**高风险变更必须通过 PR：**
+**高风险变更默认通过 PR；Alexander Qiu 可在充分验证后直接推送到 `main`：**
 - 新 skill 添加
 - API 接口变更
 - 依赖版本升级

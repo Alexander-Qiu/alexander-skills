@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: Use when contributing to alexander-skills repository, developing new skills, or any git-based collaboration requiring feature branches and PR workflow. MUST use for feature branches, git operations, PR workflow, merge conflict resolution. NEVER push directly to main.
+description: Use when contributing to alexander-skills repository, developing new skills, or any git-based collaboration requiring branch, push, PR, or merge workflow. Alexander Qiu defaults to validated direct pushes to main; other contributors use feature branches and PRs.
 license: MIT
 ---
 
@@ -8,11 +8,11 @@ license: MIT
 
 ## Overview
 
-Standardized git workflow for skill development. Ensures clean history, prevents main branch pollution, and maintains code quality through mandatory PR review.
+Standardized git workflow for skill development. Ensures clean history, keeps main validated, and documents the owner direct-push exception.
 
-**Core principle:** Feature branches + mandatory PR review = clean history + quality code + zero main branch incidents.
+**Core principle:** Validate before merging or pushing to shared branches. Use PRs for normal collaboration; use owner direct-push only for Alexander Qiu.
 
-**Golden Rule:** 🚫 **NEVER push directly to main branch** 🚫
+**Golden Rule:** Alexander Qiu (`ruizhi_qiu@foxmail.com`) defaults to validated direct pushes to `main`; everyone else uses feature branches and PRs unless explicitly authorized.
 
 > **Note:** Repository owners have special privileges. See [references/owner-privileges.md](references/owner-privileges.md) for details.
 
@@ -28,7 +28,7 @@ Standardized git workflow for skill development. Ensures clean history, prevents
 ┌─────────────────────────────────────────────────────────────────┐
 │  1. PREPARE                                                      │
 │  ┌─────────────┐    ┌─────────────┐    ┌─────────────────────┐  │
-│  │ git status  │───▶│ git branch  │───▶│ Ensure: NOT on main │  │
+│  │ git status  │───▶│ git branch  │───▶│ owner/main or branch │  │
 │  └─────────────┘    └─────────────┘    └─────────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
                             ▼
@@ -88,14 +88,14 @@ fi
 
 | Current State | Action |
 |--------------|--------|
-| On `main`, clean | Create new feature branch: `git checkout -b feature/xxx` |
-| On `main`, dirty | Stash or commit, then create branch |
+| On `main`, clean | Alexander Qiu may work directly after pulling latest; others create a feature branch |
+| On `main`, dirty | Keep changes scoped and validate before commit; non-owner contributors move work to a branch |
 | On feature branch, clean | Continue working |
 | On feature branch, dirty | Continue working, commit when ready |
 
 ---
 
-### Step 2: Create Feature Branch
+### Step 2: Create Feature Branch (standard contributors)
 
 **Naming conventions:**
 
@@ -170,7 +170,7 @@ git commit -m "Add kimi-search skill with vector memory support"
 
 ---
 
-### Step 5: Push and Create PR
+### Step 5: Push and Create PR (standard contributors)
 
 ```bash
 # Push branch to remote
@@ -229,6 +229,7 @@ git branch -vv
 | Stage changes | `git add filename` |
 | Commit | `git commit -m "message"` |
 | Push new branch | `git push -u origin feature/name` |
+| Owner direct push | `git push origin main` |
 | Update main | `git checkout main && git pull` |
 | View log | `git log --oneline --graph -10` |
 
@@ -249,7 +250,7 @@ git branch -vv
 
 | Forbidden | Why |
 |-----------|-----|
-| `git push origin main` | Pollutes main branch |
+| Non-owner `git push origin main` | Bypasses review and pollutes main branch |
 | `git push --force` on shared branches | Destroys others' work |
 | Commit secrets/API keys | Security breach |
 | Ignore failing tests | Technical debt |

@@ -24,6 +24,7 @@ Personal Agent Skills library for Codex, Claude Code, Kimi Code CLI, and other A
 | [find-skills](./skills/find-skills/) | Discover and install agent skills | ✅ Ready | 🟣 Universal |
 | [finishing-a-development-branch](./skills/finishing-a-development-branch/) | Complete development work with structured options | ✅ Ready | 🟣 Universal |
 | [frontend-design](./skills/frontend-design/) | Production-grade frontend interfaces | ✅ Ready | 🟣 Universal |
+| [frontend-slides](./third-party/frontend-slides/plugins/frontend-slides/skills/frontend-slides/) | Animation-rich HTML presentations and PPT/PPTX conversion | ✅ Ready | 🟣 Universal |
 | [git-workflow](./skills/git-workflow/) | Git workflow for skill development | ✅ Ready | 🟣 Universal |
 | [internal-comms](./skills/internal-comms/) | Resources for internal communications | ✅ Ready | 🟣 Universal |
 | [kimi-mem](./skills/kimi-mem/) | Cross-session memory management system | ✅ Ready | 🟢 Kimi |
@@ -160,6 +161,7 @@ The following are third-party skill libraries included as git submodules:
 | Project | Description | Location | Installation |
 |---------|-------------|----------|--------------|
 | [pua](./third-party/pua/) | AI Coding Agent skill plugin using PUA rhetoric to force AI to exhaust every solution | `third-party/pua/` | See [Claude Code installation](#pua-plugin) |
+| [frontend-slides](./third-party/frontend-slides/) | Zero-dependency HTML presentation generator with curated themes, PPT conversion, PDF export, and Vercel deploy helpers | `third-party/frontend-slides/` | Auto-loaded for Codex and Claude Code |
 | [orchestra-ai-research-skills](./third-party/orchestra-ai-research-skills/) | Orchestra AI research skills collection | `third-party/orchestra-ai-research-skills/` | Auto-loaded |
 | [anthropics-skills](./third-party/anthropics-skills/) | Official Anthropic skills and examples | `third-party/anthropics-skills/` | Auto-loaded |
 | [vllm-omni-skills](./third-party/vllm-omni-skills/) | vLLM-Omni multimodal model skills | `third-party/vllm-omni-skills/` | Auto-loaded |
@@ -258,6 +260,8 @@ Or see [claude-plugins/README.md](./claude-plugins/README.md) for manual install
 ```
 alexander-skills/
 ├── README.md
+├── CLAUDE.md             # Shared Codex / Claude Code agent rules
+├── AGENTS.md             # Symlink alias to CLAUDE.md
 ├── INSTALL.md             # Agent install quickstart
 ├── install.sh             # Wrapper around scripts/init-agent.py
 ├── CONTRIBUTING.md       # ⭐ Development workflow
@@ -278,7 +282,7 @@ alexander-skills/
 
 ## 🛠️ Development Workflow
 
-**⚠️ IMPORTANT: Never push directly to main!**
+**Default branch rule:** Alexander Qiu (`ruizhi_qiu@foxmail.com`) is the repository owner and defaults to validated direct pushes to `main`. Other contributors use feature branches and PRs unless Alexander explicitly authorizes a direct push.
 
 ### Quick Workflow
 
