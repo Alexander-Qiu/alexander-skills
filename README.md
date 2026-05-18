@@ -33,6 +33,7 @@ Personal Agent Skills library for Codex, Claude Code, Kimi Code CLI, and other A
 | [openspec](./skills/openspec/) | OpenAPI specification tools and utilities | ✅ Ready | 🟣 Universal |
 | [pdf](./skills/pdf/) | Read, extract, create, and manipulate PDFs | ✅ Ready | 🟣 Universal |
 | [planning-with-files](./skills/planning-with-files/) | Manus-style file-based planning for complex tasks | ✅ Ready | 🟣 Universal |
+| [project-knowledge-architecture](./skills/project-knowledge-architecture/) | Experimental method for designing agent-friendly project knowledge structure | 🧪 Experimental | 🟣 Universal |
 | [pptx](./skills/pptx/) | Create and edit PowerPoint presentations | ✅ Ready | 🟣 Universal |
 | [receiving-code-review](./skills/receiving-code-review/) | Handle code review feedback properly | ✅ Ready | 🟣 Universal |
 | [requesting-code-review](./skills/requesting-code-review/) | Request comprehensive code reviews | ✅ Ready | 🟣 Universal |
