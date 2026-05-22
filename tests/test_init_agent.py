@@ -40,6 +40,7 @@ class InitAgentTests(unittest.TestCase):
             )
             self.assertTrue((codex_home / "skills" / "docx").is_symlink())
             self.assertTrue((codex_home / "skills" / "frontend-slides").is_symlink())
+            self.assertTrue((codex_home / "skills" / "humanizer").is_symlink())
             self.assertEqual(
                 (codex_home / "skills" / "frontend-slides").resolve(),
                 (
@@ -51,6 +52,10 @@ class InitAgentTests(unittest.TestCase):
                     / "skills"
                     / "frontend-slides"
                 ).resolve(),
+            )
+            self.assertEqual(
+                (codex_home / "skills" / "humanizer").resolve(),
+                (REPO_ROOT / "third-party" / "humanizer").resolve(),
             )
             self.assertTrue((codex_home / "skills" / "pua").is_symlink())
             self.assertEqual(
@@ -75,6 +80,7 @@ class InitAgentTests(unittest.TestCase):
             self.assertTrue((claude_home / "skills" / "pdf").is_symlink())
             self.assertTrue((claude_home / "skills" / "docx").is_symlink())
             self.assertTrue((claude_home / "skills" / "frontend-slides").is_symlink())
+            self.assertTrue((claude_home / "skills" / "humanizer").is_symlink())
             self.assertTrue((claude_home / "skills" / "Claudeception").is_symlink())
             self.assertFalse((claude_home / "plugins").exists())
 

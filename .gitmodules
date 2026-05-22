@@ -13,3 +13,6 @@
 [submodule "third-party/frontend-slides"]
 	path = third-party/frontend-slides
 	url = https://github.com/zarazhangrui/frontend-slides.git
+[submodule "third-party/humanizer"]
+	path = third-party/humanizer
+	url = https://github.com/blader/humanizer.git
