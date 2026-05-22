@@ -27,6 +27,7 @@ Personal Agent Skills library for Codex, Claude Code, Kimi Code CLI, and other A
 | [frontend-slides](./third-party/frontend-slides/plugins/frontend-slides/skills/frontend-slides/) | Animation-rich HTML presentations and PPT/PPTX conversion | ✅ Ready | 🟣 Universal |
 | [git-workflow](./skills/git-workflow/) | Git workflow for skill development | ✅ Ready | 🟣 Universal |
 | [humanizer](./third-party/humanizer/) | Remove signs of AI-generated writing from text | ✅ Ready | 🟣 Universal |
+| [humanizer-zh](./third-party/humanizer-zh/) | Remove signs of AI-generated writing from text (Chinese) | ✅ Ready | 🟣 Universal |
 | [internal-comms](./skills/internal-comms/) | Resources for internal communications | ✅ Ready | 🟣 Universal |
 | [kimi-mem](./skills/kimi-mem/) | Cross-session memory management system | ✅ Ready | 🟢 Kimi |
 | [mcp-builder](./skills/mcp-builder/) | Guide for creating MCP servers | ✅ Ready | 🟣 Universal |
@@ -164,6 +165,7 @@ The following are third-party skill libraries included as git submodules:
 | [pua](./third-party/pua/) | AI Coding Agent skill plugin using PUA rhetoric to force AI to exhaust every solution | `third-party/pua/` | See [Claude Code installation](#pua-plugin) |
 | [frontend-slides](./third-party/frontend-slides/) | Zero-dependency HTML presentation generator with curated themes, PPT conversion, PDF export, and Vercel deploy helpers | `third-party/frontend-slides/` | Auto-loaded for Codex and Claude Code |
 | [humanizer](./third-party/humanizer/) | Markdown skill for making AI-looking text sound more natural and human-written | `third-party/humanizer/` | Auto-loaded for Codex and Claude Code |
+| [humanizer-zh](./third-party/humanizer-zh/) | Chinese version of humanizer: make AI-looking text sound more natural and human-written | `third-party/humanizer-zh/` | Auto-loaded for Codex and Claude Code |
 | [orchestra-ai-research-skills](./third-party/orchestra-ai-research-skills/) | Orchestra AI research skills collection | `third-party/orchestra-ai-research-skills/` | Auto-loaded |
 | [anthropics-skills](./third-party/anthropics-skills/) | Official Anthropic skills and examples | `third-party/anthropics-skills/` | Auto-loaded |
 | [vllm-omni-skills](./third-party/vllm-omni-skills/) | vLLM-Omni multimodal model skills | `third-party/vllm-omni-skills/` | Auto-loaded |

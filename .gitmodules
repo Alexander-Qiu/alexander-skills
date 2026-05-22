@@ -16,3 +16,6 @@
 [submodule "third-party/humanizer"]
 	path = third-party/humanizer
 	url = https://github.com/blader/humanizer.git
+[submodule "third-party/humanizer-zh"]
+	path = third-party/humanizer-zh
+	url = https://github.com/op7418/Humanizer-zh.git
