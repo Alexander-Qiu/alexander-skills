@@ -16,15 +16,24 @@ git submodule update --init --recursive
 ./install.sh --agent codex
 ```
 
-This links the default profile into:
+This links the small default profile into:
 
 - `~/.codex/skills`
-- `~/.codex/prompts` for prompt entrypoints such as `pua.md`
 
 Preview without writing:
 
 ```bash
 ./install.sh --agent codex --dry-run
+```
+
+Install additional packs explicitly; repeated runs add links without removing
+the existing default links:
+
+```bash
+./install.sh --agent codex --profile frontend
+./install.sh --agent codex --profile infra
+./install.sh --agent codex --profile repo-maintenance
+./install.sh --agent codex --profile legacy-compat
 ```
 
 ## Claude Code
@@ -33,25 +42,38 @@ Preview without writing:
 ./install.sh --agent claude-code
 ```
 
-This links shared skills into `~/.claude/skills` and installs the Claude Code
-plugins listed in `manifests/skills.json`.
-
-Install only local skill symlinks and skip marketplace/plugin commands:
+This links the small shared default into `~/.claude/skills`. Plugins are an
+explicit pack:
 
 ```bash
-./install.sh --agent claude-code --skip-plugins
+./install.sh --agent claude-code --profile plugins
 ```
 
-Preview plugin commands and skill links without writing:
+Preview plugin commands without running them:
 
 ```bash
-./install.sh --agent claude-code --dry-run
+./install.sh --agent claude-code --profile plugins --dry-run
+```
+
+Install an optional skill pack without any plugin commands:
+
+```bash
+./install.sh --agent claude-code --profile frontend --skip-plugins
 ```
 
 ## Safety
 
-The installer refuses to overwrite existing non-symlink files or directories.
-Use `--replace` only after checking `--dry-run` output.
+The installer validates every source and target before creating the first
+link. It refuses to overwrite existing non-symlink files or directories.
+Replacing a regular file or directory requires a backup destination:
+
+```bash
+./install.sh --agent codex --dry-run --replace --backup-dir /tmp/alexander-skills-backup
+./install.sh --agent codex --replace --backup-dir /tmp/alexander-skills-backup
+```
+
+Existing backups are never overwritten. Review dry-run output before the
+live migration.
 
 Agent target directories can be overridden for isolated tests:
 

@@ -4,6 +4,21 @@ Personal Agent Skills library for Codex, Claude Code, Kimi Code CLI, and other A
 
 > ⚠️ **Development Note**: This project uses strict git workflow. See [CONTRIBUTING.md](./CONTRIBUTING.md) and `/skill:git-workflow` before making changes.
 
+## Profiles
+
+The catalog below is larger than the default install. Modern agents load a
+small shared core and add focused packs only when needed:
+
+| Profile | Purpose |
+|---------|---------|
+| `default` | Documents, MCP, diagrams, web testing, humanized writing; Codex also gets Luna swarm delegation |
+| `frontend` | UI implementation, slides, themes, browser verification |
+| `docs-media` | Office files, slides, internal writing, GIFs |
+| `infra` | MCP, OpenSpec, vLLM, worktrees, cross-agent helpers |
+| `research` | Evidence-heavy specialist research |
+| `repo-maintenance` | Git, review, planning, skill development and validation |
+| `legacy-compat` | Older Superpowers/PUA workflows, available only by explicit request |
+
 ## Skills
 
 | Skill | Description | Status | Platform |
@@ -11,16 +26,16 @@ Personal Agent Skills library for Codex, Claude Code, Kimi Code CLI, and other A
 | [algorithmic-art](./skills/algorithmic-art/) | Creating algorithmic art using p5.js | ✅ Ready | 🟣 Universal |
 | [architecture-diagrams](./skills/architecture-diagrams/) | Creating architecture diagrams with Mermaid | ✅ Ready | 🟣 Universal |
 | [beautiful-mermaid](./skills/beautiful-mermaid/) | Render Mermaid diagrams as SVG and PNG | ✅ Ready | 🟣 Universal |
-| [brainstorming](./skills/brainstorming/) | Explore user intent before implementation | ✅ Ready | 🟣 Universal |
+| [brainstorming](./skills/brainstorming/) | Explore user intent before implementation | 🧳 Legacy | 🟣 Universal |
 | [brand-guidelines](./skills/brand-guidelines/) | Anthropic's official brand colors and typography | ✅ Ready | 🟣 Universal |
 | [canvas-design](./skills/canvas-design/) | Create beautiful visual art in PNG/PDF | ✅ Ready | 🟣 Universal |
 | [Claudeception](./skills/Claudeception/) | Multi-layered agent collaboration framework | ✅ Ready | 🔵 Claude |
 | [cli-agent-caller](./skills/cli-agent-caller/) | Multi-agent collaboration via CLI | ✅ Ready | 🟣 Universal |
 | [deep-requirement-analysis](./skills/deep-requirement-analysis/) | Production-grade task planner with progressive disclosure | ✅ Ready | 🟢 Kimi |
-| [dispatching-parallel-agents](./skills/dispatching-parallel-agents/) | Dispatch 2+ independent tasks in parallel | ✅ Ready | 🟣 Universal |
-| [doc-coauthoring](./skills/doc-coauthoring/) | Structured workflow for co-authoring documentation | ✅ Ready | 🟣 Universal |
+| [dispatching-parallel-agents](./skills/dispatching-parallel-agents/) | Dispatch 2+ independent tasks in parallel | 🧳 Legacy | 🟣 Universal |
+| [doc-coauthoring](./skills/doc-coauthoring/) | Structured workflow for co-authoring documentation | 🧳 Legacy | 🟣 Universal |
 | [docx](./skills/docx/) | Create and manipulate Word documents | ✅ Ready | 🟣 Universal |
-| [executing-plans](./skills/executing-plans/) | Execute written implementation plans | ✅ Ready | 🟣 Universal |
+| [executing-plans](./skills/executing-plans/) | Execute written implementation plans | 🧳 Legacy | 🟣 Universal |
 | [find-skills](./skills/find-skills/) | Discover and install agent skills | ✅ Ready | 🟣 Universal |
 | [finishing-a-development-branch](./skills/finishing-a-development-branch/) | Complete development work with structured options | ✅ Ready | 🟣 Universal |
 | [frontend-design](./skills/frontend-design/) | Production-grade frontend interfaces | ✅ Ready | 🟣 Universal |
@@ -38,18 +53,17 @@ Personal Agent Skills library for Codex, Claude Code, Kimi Code CLI, and other A
 | [pptx](./skills/pptx/) | Create and edit PowerPoint presentations | ✅ Ready | 🟣 Universal |
 | [receiving-code-review](./skills/receiving-code-review/) | Handle code review feedback properly | ✅ Ready | 🟣 Universal |
 | [requesting-code-review](./skills/requesting-code-review/) | Request comprehensive code reviews | ✅ Ready | 🟣 Universal |
-| [skill-creator](./skills/skill-creator/) | Guide for creating effective skills | ✅ Ready | 🟣 Universal |
 | [skill-validation](./skills/skill-validation/) | Comprehensive validation framework for skills | ✅ Ready | 🟣 Universal |
 | [slack-gif-creator](./skills/slack-gif-creator/) | Create animated GIFs optimized for Slack | ✅ Ready | 🟣 Universal |
 | [subagent-driven-development](./skills/subagent-driven-development/) | Execute plans with independent tasks | ✅ Ready | 🟣 Universal |
+| [swarming-with-luna](./skills/swarming-with-luna/) | Fine-grained GPT-5.6 Luna delegation under a stronger controller | ✅ Ready | 🟠 Codex |
 | [systematic-debugging](./skills/systematic-debugging/) | Debug bugs and test failures | ✅ Ready | 🟣 Universal |
-| [systematic-literature-review](./skills/systematic-literature-review/) | Conduct systematic literature reviews with AI | ✅ Ready | 🟣 Universal |
-| [test-driven-development](./skills/test-driven-development/) | TDD workflow for features and bugfixes | ✅ Ready | 🟣 Universal |
+| [test-driven-development](./skills/test-driven-development/) | TDD workflow for features and bugfixes | 🧳 Legacy | 🟣 Universal |
 | [theme-factory](./skills/theme-factory/) | Styling artifacts with themes | ✅ Ready | 🟣 Universal |
 | [tooluniverse-literature-deep-research](./skills/tooluniverse-literature-deep-research/) | Comprehensive literature research with evidence grading | ✅ Ready | 🟣 Universal |
 | [using-git-worktrees](./skills/using-git-worktrees/) | Create isolated git worktrees | ✅ Ready | 🟣 Universal |
-| [using-superpowers](./skills/using-superpowers/) | How to find and use skills | ✅ Ready | 🟣 Universal |
-| [verification-before-completion](./skills/verification-before-completion/) | Verify work before claiming completion | ✅ Ready | 🟣 Universal |
+| [using-superpowers](./skills/using-superpowers/) | How to find and use skills | 🧳 Legacy | 🟣 Universal |
+| [verification-before-completion](./skills/verification-before-completion/) | Verify work before claiming completion | 🧳 Legacy | 🟣 Universal |
 | [vllm-deploy-docker](./skills/vllm-deploy-docker/) | Deploy vLLM with Docker | ✅ Ready | 🟣 Universal |
 | [vllm-deploy-simple](./skills/vllm-deploy-simple/) | Quick install and deploy vLLM locally | ✅ Ready | 🟣 Universal |
 | [webapp-testing](./skills/webapp-testing/) | Test local web applications with Playwright | ✅ Ready | 🟣 Universal |
@@ -59,9 +73,11 @@ Personal Agent Skills library for Codex, Claude Code, Kimi Code CLI, and other A
 | [xlsx](./skills/xlsx/) | Create and manipulate Excel spreadsheets | ✅ Ready | 🟣 Universal |
 
 **Platform Legend:**
+- 🧳 **Legacy** - Available only through the explicit compatibility profile
 - 🟣 **Universal** - Documentation-based skills that can be installed into Codex and Claude Code
 - 🟢 **Kimi** - Kimi-specific (requires MCP or Kimi-specific features)
 - 🔵 **Claude** - Claude Code-specific (requires Claude plugin, hook, or command features)
+- 🟠 **Codex** - Codex-specific model or subagent behavior
 
 > 💡 **Note:** Most documentation-based skills are marked as Universal since the core concepts work across agents. Platform-specific skills typically involve MCP integration or agent-specific tool usage.
 
@@ -75,21 +91,23 @@ Install the default Codex profile:
 ./install.sh --agent codex
 ```
 
-The installer links compatible skills into `~/.codex/skills` and prompt
-entrypoints such as PUA into `~/.codex/prompts`.
+The installer links the curated default into `~/.codex/skills`. Add a named
+profile with a second installer invocation when needed.
 
 Preview first:
 
 ```bash
 ./install.sh --agent codex --dry-run
+./install.sh --agent codex --profile frontend --dry-run
 ```
 
 ### For Claude Code Users
 
-Install shared skills plus Claude Code plugins:
+Install the shared default, then add plugins explicitly if wanted:
 
 ```bash
 ./install.sh --agent claude-code
+./install.sh --agent claude-code --profile plugins
 ```
 
 For a skills-only install that skips `claude plugin` commands:
@@ -131,7 +149,7 @@ For Claude Code, use the official OpenAI plugin maintained in [openai/codex-plug
 
 For PUA (我们不养闲 Agent), you have two installation options:
 
-**Option 1: Via Official Marketplace (Recommended for users)**
+**Option 1: Via Marketplace (explicit legacy opt-in)**
 ```bash
 /plugin marketplace add tanweai/pua
 /plugin install pua@pua-skills
@@ -162,15 +180,15 @@ The following are third-party skill libraries included as git submodules:
 
 | Project | Description | Location | Installation |
 |---------|-------------|----------|--------------|
-| [pua](./third-party/pua/) | AI Coding Agent skill plugin using PUA rhetoric to force AI to exhaust every solution | `third-party/pua/` | See [Claude Code installation](#pua-plugin) |
-| [frontend-slides](./third-party/frontend-slides/) | Zero-dependency HTML presentation generator with curated themes, PPT conversion, PDF export, and Vercel deploy helpers | `third-party/frontend-slides/` | Auto-loaded for Codex and Claude Code |
+| [pua](./third-party/pua/) | Legacy high-pressure workflow plugin | `third-party/pua/` | Explicit `legacy-compat` only |
+| [frontend-slides](./third-party/frontend-slides/) | Zero-dependency HTML presentation generator with curated themes, PPT conversion, PDF export, and Vercel deploy helpers | `third-party/frontend-slides/` | `frontend` or `docs-media` profile |
 | [humanizer](./third-party/humanizer/) | Markdown skill for making AI-looking text sound more natural and human-written | `third-party/humanizer/` | Auto-loaded for Codex and Claude Code |
 | [humanizer-zh](./third-party/humanizer-zh/) | Chinese version of humanizer: make AI-looking text sound more natural and human-written | `third-party/humanizer-zh/` | Auto-loaded for Codex and Claude Code |
-| [orchestra-ai-research-skills](./third-party/orchestra-ai-research-skills/) | Orchestra AI research skills collection | `third-party/orchestra-ai-research-skills/` | Auto-loaded |
-| [anthropics-skills](./third-party/anthropics-skills/) | Official Anthropic skills and examples | `third-party/anthropics-skills/` | Auto-loaded |
-| [vllm-omni-skills](./third-party/vllm-omni-skills/) | vLLM-Omni multimodal model skills | `third-party/vllm-omni-skills/` | Auto-loaded |
+| [orchestra-ai-research-skills](./third-party/orchestra-ai-research-skills/) | Orchestra AI research skills collection | `third-party/orchestra-ai-research-skills/` | Upstream reference; curate before importing |
+| [anthropics-skills](./third-party/anthropics-skills/) | Official Anthropic skills and examples | `third-party/anthropics-skills/` | Upstream reference; not recursively discovered |
+| [vllm-omni-skills](./third-party/vllm-omni-skills/) | vLLM-Omni multimodal model skills | `third-party/vllm-omni-skills/` | Upstream reference for future infra curation |
 
-> 💡 **Note:** Most third-party projects are auto-loaded as skills. PUA requires explicit plugin installation for Claude Code users (see installation options above).
+> 💡 **Note:** A submodule is an upstream source, not an installation unit. Only manifest entries are exposed as skills.
 
 ## Plugins
 

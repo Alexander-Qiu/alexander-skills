@@ -8,16 +8,17 @@ Claude Code has two layers:
 
 ```bash
 ./install.sh --agent claude-code
+./install.sh --agent claude-code --profile plugins
 ```
 
 For a local-skills-only install:
 
 ```bash
-./install.sh --agent claude-code --skip-plugins
+./install.sh --agent claude-code --profile frontend --skip-plugins
 ```
 
 For a safe preview:
 
 ```bash
-./install.sh --agent claude-code --dry-run
+./install.sh --agent claude-code --profile plugins --dry-run
 ```

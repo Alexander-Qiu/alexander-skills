@@ -46,24 +46,36 @@ def same_target(target: Path, source: Path) -> bool:
         return False
 
 
-def remove_existing(target: Path) -> None:
-    if target.is_symlink() or target.is_file():
-        target.unlink()
-    elif target.is_dir():
-        shutil.rmtree(target)
+def backup_target(target: Path, target_root: Path, backup_dir: Path) -> Path:
+    relative = target.relative_to(target_root)
+    destination = backup_dir / relative
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.move(str(target), str(destination))
+    return destination
 
 
-def link_path(source: Path, target: Path, *, replace: bool, dry_run: bool) -> str:
+def link_path(
+    source: Path,
+    target: Path,
+    target_root: Path,
+    *,
+    replace: bool,
+    backup_dir: Path | None,
+    dry_run: bool,
+) -> str:
     if target.exists() or target.is_symlink():
         if same_target(target, source):
             return f"current {target} -> {source}"
-        if not replace:
-            if target.is_symlink():
-                raise InstallError(f"Refusing to replace existing symlink: {target}")
-            raise InstallError(f"Refusing to replace existing non-symlink: {target}")
         if dry_run:
-            return f"would replace {target} -> {source}"
-        remove_existing(target)
+            if target.is_symlink():
+                return f"would replace symlink {target} -> {source}"
+            destination = backup_dir / target.relative_to(target_root) if backup_dir else None
+            return f"would back up {target} -> {destination}; then link -> {source}"
+        if target.is_symlink():
+            target.unlink()
+        else:
+            assert replace and backup_dir is not None
+            backup_target(target, target_root, backup_dir)
 
     if dry_run:
         return f"would link {target} -> {source}"
@@ -73,6 +85,58 @@ def link_path(source: Path, target: Path, *, replace: bool, dry_run: bool) -> st
     return f"linked {target} -> {source}"
 
 
+def install_specs(
+    repo: Path,
+    manifest: dict[str, Any],
+    profile: dict[str, Any],
+    target_root: Path,
+) -> list[tuple[Path, Path]]:
+    specs: list[tuple[Path, Path]] = []
+    skill_defs = manifest["skills"]
+
+    for skill_name in profile.get("skills", []):
+        if skill_name not in skill_defs:
+            raise InstallError(f"Profile references unknown skill: {skill_name}")
+        source = ensure_source(repo, skill_defs[skill_name]["source"])
+        if not (source / "SKILL.md").is_file():
+            raise InstallError(f"Skill source has no SKILL.md: {source}")
+        specs.append((source, target_root / "skills" / skill_name))
+
+    for prompt in profile.get("prompts", []):
+        source = ensure_source(repo, prompt["source"])
+        specs.append((source, target_root / "prompts" / prompt["name"]))
+
+    return specs
+
+
+def preflight_targets(
+    specs: list[tuple[Path, Path]],
+    target_root: Path,
+    *,
+    replace: bool,
+    backup_dir: Path | None,
+) -> None:
+    errors: list[str] = []
+    for source, target in specs:
+        if not (target.exists() or target.is_symlink()) or same_target(target, source):
+            continue
+        if not replace:
+            kind = "symlink" if target.is_symlink() else "non-symlink"
+            errors.append(f"Refusing to replace existing {kind}: {target}")
+            continue
+        if target.is_symlink():
+            continue
+        if backup_dir is None:
+            errors.append(f"--backup-dir is required to replace existing non-symlink: {target}")
+            continue
+        destination = backup_dir / target.relative_to(target_root)
+        if destination.exists() or destination.is_symlink():
+            errors.append(f"Backup target already exists: {destination}")
+
+    if errors:
+        raise InstallError("Install preflight failed:\n" + "\n".join(errors))
+
+
 def install_skill_links(
     repo: Path,
     manifest: dict[str, Any],
@@ -80,23 +144,24 @@ def install_skill_links(
     target_root: Path,
     *,
     replace: bool,
+    backup_dir: Path | None,
     dry_run: bool,
 ) -> list[str]:
     messages: list[str] = []
-    skills_dir = target_root / "skills"
-    skill_defs = manifest["skills"]
+    specs = install_specs(repo, manifest, profile, target_root)
+    preflight_targets(specs, target_root, replace=replace, backup_dir=backup_dir)
 
-    for skill_name in profile.get("skills", []):
-        if skill_name not in skill_defs:
-            raise InstallError(f"Profile references unknown skill: {skill_name}")
-        source = ensure_source(repo, skill_defs[skill_name]["source"])
-        target = skills_dir / skill_name
-        messages.append(link_path(source, target, replace=replace, dry_run=dry_run))
-
-    for prompt in profile.get("prompts", []):
-        source = ensure_source(repo, prompt["source"])
-        target = target_root / "prompts" / prompt["name"]
-        messages.append(link_path(source, target, replace=replace, dry_run=dry_run))
+    for source, target in specs:
+        messages.append(
+            link_path(
+                source,
+                target,
+                target_root,
+                replace=replace,
+                backup_dir=backup_dir,
+                dry_run=dry_run,
+            )
+        )
 
     return messages
 
@@ -142,7 +207,8 @@ def run_claude_plugins(profile: dict[str, Any], *, dry_run: bool, skip_plugins: 
         if completed.returncode == 0:
             messages.append(f"ok {command_text}")
         else:
-            messages.append(f"warn {command_text}: {completed.stderr.strip() or completed.stdout.strip()}")
+            detail = completed.stderr.strip() or completed.stdout.strip()
+            raise InstallError(f"Claude plugin command failed: {command_text}: {detail}")
     return messages
 
 
@@ -156,6 +222,14 @@ def install(args: argparse.Namespace) -> int:
 
     home = Path(args.home).expanduser().resolve()
     target_root = agent_home(args.agent, home)
+    backup_dir = Path(args.backup_dir).expanduser().resolve() if args.backup_dir else None
+    if backup_dir is not None:
+        try:
+            backup_dir.relative_to(target_root)
+        except ValueError:
+            pass
+        else:
+            raise InstallError("--backup-dir must be outside the agent target root")
     if args.dry_run:
         print(f"DRY RUN for {args.agent} profile {args.profile}")
 
@@ -169,6 +243,7 @@ def install(args: argparse.Namespace) -> int:
         profile,
         target_root,
         replace=args.replace,
+        backup_dir=backup_dir,
         dry_run=args.dry_run,
     )
     plugin_messages = []
@@ -192,6 +267,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--home", type=Path, default=Path.home())
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--replace", action="store_true", help="replace existing conflicting targets")
+    parser.add_argument(
+        "--backup-dir",
+        type=Path,
+        help="required with --replace when a conflicting target is a regular file or directory",
+    )
     parser.add_argument("--skip-plugins", action="store_true", help="Claude Code: install skills only")
     return parser
 

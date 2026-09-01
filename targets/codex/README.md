@@ -6,13 +6,14 @@ Codex uses native skill discovery from `~/.codex/skills`.
 ./install.sh --agent codex
 ```
 
-The default profile is defined in `manifests/skills.json`. It installs shared
-skills plus the Codex-specific PUA skill and prompt entrypoint.
+The default profile is defined in `manifests/skills.json`. It contains a small
+shared core plus the Codex-specific `swarming-with-luna` skill. PUA is available
+only from the explicit `legacy-compat` profile.
 
 Useful checks:
 
 ```bash
 ./install.sh --agent codex --dry-run
 ls ~/.codex/skills/pdf/SKILL.md
-ls ~/.codex/prompts/pua.md
+ls ~/.codex/skills/swarming-with-luna/SKILL.md
 ```
